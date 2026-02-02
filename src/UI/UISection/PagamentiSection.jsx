@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
-import "../../UIX/PagamentiSection.css"; // puoi riutilizzare lo stesso stile
-import { FiFilter } from "react-icons/fi";
+import "../../UIX/PagamentiSection.css";
+import { Filter } from "lucide-react";
 
 export default function PagamentiSection() {
   const [popupOpen, setPopupOpen] = useState(false);
@@ -130,7 +130,7 @@ export default function PagamentiSection() {
         <h1>Pagamenti</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="btn-add" onClick={() => setShowFilters(!showFilters)} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <FiFilter size={20} /> Filtri
+            <Filter size={20} /> Filtri
           </button>
           <button className="btn-add" onClick={() => { setPopupOpen(true); setSelectedPagamento(null); setNewPagamento(initialPagamentoState); }}>
             Aggiungi Pagamento
