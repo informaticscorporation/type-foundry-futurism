@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
-import "../../UIX/ClientiSection.css"; // puoi riutilizzare lo stesso CSS
-import { FiFilter } from "react-icons/fi";
+import "../../UIX/ClientiSection.css";
+import { Filter } from "lucide-react";
 
 export default function ClientiSection() {
   const [popupOpen, setPopupOpen] = useState(false);
@@ -96,7 +96,7 @@ export default function ClientiSection() {
         <h1>Clienti</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="btn-add" onClick={() => setShowFilters(!showFilters)} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <FiFilter size={20} /> Filtri
+            <Filter size={20} /> Filtri
           </button>
           <button className="btn-add" onClick={() => { setPopupOpen(true); setSelectedUser(null); setNewUser(initialUserState); }}>
             Aggiungi Cliente
