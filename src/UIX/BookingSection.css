@@ -1,13 +1,15 @@
-/* ===================== CONTAINER PRINCIPALE ===================== */
+/* ===================== CONTAINER PRINCIPALE - Neomorphic ===================== */
 .booking-section-container {
-  background-color: #f5f6fa;
-  padding: 20px;
+  background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  padding: 24px;
   color: #1f2937;
   font-family: 'Inter', sans-serif;
   max-width: 1400px;
   margin: 0 auto;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  border-radius: 20px;
+  box-shadow: 
+    8px 8px 24px rgba(0, 0, 0, 0.06),
+    -4px -4px 16px rgba(255, 255, 255, 0.9);
 }
 
 /* ===================== HEADER ===================== */
@@ -15,72 +17,124 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .booking-header h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #111827;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  position: relative;
 }
 
-/* ===================== BUTTONS ===================== */
+.booking-header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 48px;
+  height: 4px;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  border-radius: 2px;
+}
+
+/* ===================== BUTTONS - Neomorphic ===================== */
 .btn-add,
 .popup-btn {
-  background-color: #16a34a;
+  background: linear-gradient(145deg, #16a34a, #15803d);
   color: #ffffff;
   border: none;
-  padding: 10px 18px;
+  padding: 12px 24px;
   cursor: pointer;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    4px 4px 16px rgba(22, 163, 74, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .btn-add:hover,
 .popup-btn:hover {
-  background-color: #12883c;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 
+    6px 6px 24px rgba(22, 163, 74, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-add:active,
+.popup-btn:active {
+  transform: translateY(-1px);
 }
 
 /* Pulsante elimina rosso */
 .popup-btn.delete {
-  background-color: #dc2626;
+  background: linear-gradient(145deg, #dc2626, #b91c1c);
+  box-shadow: 
+    4px 4px 16px rgba(220, 38, 38, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .popup-btn.delete:hover {
-  background-color: #b91c1c;
-  transform: translateY(-2px);
+  box-shadow: 
+    6px 6px 24px rgba(220, 38, 38, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* ===================== FILTRI ===================== */
+/* ===================== FILTRI - Neomorphic ===================== */
 .booking-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  border-radius: 16px;
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.04),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.8);
 }
 
 .booking-filters input,
 .booking-filters select {
-  padding: 10px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
   min-width: 160px;
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background: linear-gradient(145deg, #f8fafc, #ffffff);
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.06),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.9);
+  transition: all 0.25s ease;
+  font-size: 14px;
+  color: #374151;
 }
 
 .booking-filters input:focus,
 .booking-filters select:focus {
   outline: none;
-  border-color: #16a34a;
-  box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
+  box-shadow: 
+    inset 2px 2px 6px rgba(22, 163, 74, 0.1),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.9),
+    0 0 0 3px rgba(22, 163, 74, 0.15);
 }
 
-/* ===================== TABELLA ===================== */
+.booking-filters input::placeholder {
+  color: #94a3b8;
+}
+
+/* ===================== TABELLA - Neomorphic ===================== */
 .booking-table-container {
   overflow-x: auto;
   width: 100%;
+  border-radius: 16px;
+  box-shadow: 
+    8px 8px 24px rgba(0, 0, 0, 0.06),
+    -4px -4px 16px rgba(255, 255, 255, 0.9);
 }
 
 .booking-table {
@@ -88,91 +142,123 @@
   border-collapse: separate;
   border-spacing: 0;
   min-width: 900px;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
 .booking-table th,
 .booking-table td {
-  padding: 12px 15px;
+  padding: 14px 16px;
   text-align: left;
+  font-size: 14px;
 }
 
 .booking-table th {
-  background-color: #16a34a;
+  background: linear-gradient(145deg, #16a34a, #15803d);
   color: #ffffff;
   font-weight: 600;
   position: sticky;
   top: 0;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+.booking-table tbody tr {
+  transition: all 0.2s ease;
 }
 
 .booking-table tr:nth-child(even) {
-  background-color: #f9fafb;
+  background: linear-gradient(145deg, #f8fafc, #ffffff);
 }
 
 .booking-table tr:hover {
-  background-color: #e6f4ea;
+  background: linear-gradient(145deg, #e7f8ec, #dcfce7);
   cursor: pointer;
+  transform: scale(1.005);
 }
 
 /* Riga selezionata */
 .booking-table tr.selected {
-  background-color: #a7f3d0 !important;
+  background: linear-gradient(145deg, #bbf7d0, #a7f3d0) !important;
+  box-shadow: inset 0 0 0 2px #16a34a;
 }
 
-/* ===================== POPUP ===================== */
+/* ===================== POPUP - Neomorphic ===================== */
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.6);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 15px;
+  padding: 20px;
   z-index: 1000;
-  animation: fadeIn 0.25s ease-in-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .popup-content {
-  background-color: #ffffff;
-  padding: 30px 35px;
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  padding: 32px 40px;
   width: 100%;
   max-width: 700px;
-  border-radius: 16px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+  max-height: 85vh;
+  border-radius: 24px;
+  box-shadow: 
+    16px 16px 48px rgba(0, 0, 0, 0.15),
+    -8px -8px 32px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   position: relative;
-  transform: translateY(-20px);
-  opacity: 0;
   overflow-y: auto;
-  animation: popupIn 0.35s forwards;
+  animation: popupIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.popup-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
 .popup-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: transparent;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(145deg, #f1f5f9, #e2e8f0);
   border: none;
-  font-size: 1.5rem;
+  border-radius: 12px;
+  font-size: 1.25rem;
   font-weight: bold;
   cursor: pointer;
-  color: #6b7280;
-  transition: color 0.2s ease-in-out;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 
+    3px 3px 8px rgba(0, 0, 0, 0.08),
+    -2px -2px 6px rgba(255, 255, 255, 0.9);
 }
 
 .popup-close:hover {
-  color: #111827;
+  color: #0f172a;
+  background: linear-gradient(145deg, #e2e8f0, #cbd5e1);
+  transform: scale(1.05);
 }
 
-/* ===================== FORM ===================== */
+/* ===================== FORM - Neomorphic ===================== */
 .form-step {
   display: none;
   gap: 20px;
@@ -189,37 +275,56 @@
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
 }
 
 .form-field label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .form-field input,
-.form-field select {
-  padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
+.form-field select,
+.form-field textarea {
+  padding: 14px 18px;
+  border: none;
+  border-radius: 14px;
   font-size: 1rem;
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background: linear-gradient(145deg, #f8fafc, #ffffff);
+  box-shadow: 
+    inset 3px 3px 8px rgba(0, 0, 0, 0.06),
+    inset -3px -3px 8px rgba(255, 255, 255, 0.9);
+  transition: all 0.25s ease;
+  color: #1e293b;
 }
 
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
   outline: none;
-  border-color: #16a34a;
-  box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
+  box-shadow: 
+    inset 3px 3px 8px rgba(22, 163, 74, 0.08),
+    inset -3px -3px 8px rgba(255, 255, 255, 0.9),
+    0 0 0 3px rgba(22, 163, 74, 0.2);
 }
 
-/* ===================== STEP NAVIGATION ===================== */
+.form-field input::placeholder {
+  color: #94a3b8;
+}
+
+/* ===================== STEP NAVIGATION - Neomorphic ===================== */
 .step-navigation {
   display: flex;
-  justify-content: space-between;
-  margin-top: 25px;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(203, 213, 225, 0.5);
 }
 
 /* ===================== ANIMAZIONI ===================== */
@@ -229,18 +334,40 @@
 }
 
 @keyframes popupIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(-30px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
 }
 
 /* ===================== RESPONSIVO ===================== */
 @media (max-width: 768px) {
-  .form-step {
+  .booking-section-container {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .booking-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-step.active {
     flex-direction: column;
   }
 
   .popup-content {
-    padding: 20px;
+    padding: 24px 20px;
+    border-radius: 20px;
+    max-height: 90vh;
+  }
+
+  .booking-filters {
+    padding: 12px;
   }
 
   .booking-filters input,
@@ -250,5 +377,13 @@
 
   .booking-table {
     min-width: 100%;
+  }
+
+  .step-navigation {
+    flex-direction: column;
+  }
+
+  .step-navigation button {
+    width: 100%;
   }
 }
