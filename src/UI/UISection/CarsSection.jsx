@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../UIX/CarSection.css";
-import { FiFilter } from "react-icons/fi";
 
 export default function CarsSection() {
   const [popupOpen, setPopupOpen] = useState(false);
