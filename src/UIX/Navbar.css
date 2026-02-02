@@ -1,0 +1,171 @@
+/* NAVBAR BASE */
+.navbar {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 100px;
+  width: 90%;
+  height: 80px;
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: green;
+  z-index: 2000;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* LOGO CENTRALE */
+.logo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-container img {
+  position: relative;
+  left: 40px;
+  height: 90px;
+  cursor: pointer;
+}
+
+/* HAMBURGER MENU SINISTRA */
+.hamburger {
+  width: 35px;
+  height: 25px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 2100;
+}
+
+.line {
+  height: 3px;
+  width: 100%;
+  background: green;
+  border-radius: 3px;
+  transition: all 0.4s ease;
+}
+
+.hamburger.open .top {
+  transform: translateX(8px);
+  background: orange;
+}
+
+.hamburger.open .bottom {
+  transform: translateX(-3px);
+}
+
+/* SIGN-IN / SIGN-UP BUTTON */
+.signin-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.signin-btn {
+  background: none;
+  border: 2px solid green;
+  color: green;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.signin-btn:hover {
+  background: green;
+  color: white;
+}
+
+/* USER INFO (Hi, Nome Cognome + Logout) */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: green;
+  font-weight: 500;
+}
+
+.hi-text {
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  background: green;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: darkgreen;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar {
+    top: 10px;
+    width: 95%;
+    height: 60px;
+    padding: 0.5rem 1rem;
+  }
+
+  .logo-container img {
+    height: 45px;
+    left: 20px;
+  }
+
+  .signin-btn {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+    border-width: 1.5px;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .user-info {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .hi-text {
+    font-size: 0.85rem;
+  }
+
+  .logout-btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Ancora più piccolo (telefoni stretti) */
+@media (max-width: 420px) {
+  .navbar {
+    height: 55px;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .hi-text {
+    font-size: 0.75rem;
+  }
+
+  .logout-btn {
+    padding: 3px 6px;
+    font-size: 0.7rem;
+  }
+}

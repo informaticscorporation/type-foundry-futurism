@@ -1,0 +1,203 @@
+/* ===== CONTAINER ===== */
+.pagamento-container {
+  min-height: 100vh;
+  background: transparent;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagamento-content {
+  
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ===== HEADER ===== */
+.pagamento-header {
+  margin-bottom: 32px;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  transition: color 0.2s ease;
+}
+
+.back-button:hover {
+  color: #212529;
+}
+
+.pagamento-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* ===== PAYMENT METHODS ===== */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-card {
+  background: #ffffff;
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.payment-card:hover {
+  border-color: #adb5bd;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.payment-card.selected {
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.15);
+}
+
+.payment-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ===== PAYMENT ICON ===== */
+.payment-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #f1f3f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.payment-icon.active {
+  background: linear-gradient(135deg, #4CAF50 0%, #43A047 100%);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* ===== PAYMENT INFO ===== */
+.payment-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.payment-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 4px 0;
+}
+
+.payment-description {
+  font-size: 13px;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* ===== CHECK INDICATOR ===== */
+.check-indicator {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.check-indicator.checked {
+  background: linear-gradient(135deg, #4CAF50 0%, #43A047 100%);
+  border-color: #4CAF50;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* ===== CONTINUE BUTTON ===== */
+.continue-button {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 32px;
+  transition: all 0.25s ease;
+}
+
+.continue-button.active {
+  background: linear-gradient(135deg, #4CAF50 0%, #43A047 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.35);
+}
+
+.continue-button.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.continue-button.disabled {
+  background: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .pagamento-container {
+    padding: 16px;
+  }
+
+  .pagamento-title {
+    font-size: 20px;
+  }
+
+  .payment-card {
+    padding: 14px;
+  }
+
+  .payment-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .payment-title {
+    font-size: 15px;
+  }
+
+  .payment-description {
+    font-size: 12px;
+  }
+}

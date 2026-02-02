@@ -1,0 +1,173 @@
+.login-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  font-family: "Poppins", sans-serif;
+}
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.login-left {
+  flex: 1;
+  background-color: #048b9a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 5%;
+}
+.login-left font {
+  color: white;
+}
+
+.logo {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.subtitle {
+    color: white;
+  margin: 10px 0 30px 0;
+  font-size: 1rem;
+}
+
+.sign-btn {
+  background: #008b45;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+
+.sign-btn:hover {
+  background: #006e35;
+}
+
+.login-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  text-align: center;
+  padding: 0 10%;
+}
+
+
+.title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome {
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.form {
+  width: 100%;
+  max-width: 350px;
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #eee;
+  border-radius: 30px;
+  margin-bottom: 15px;
+  padding: 0 15px;
+  background: #fafafa;
+}
+
+.input-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+}
+
+.icon {
+  color: #888;
+}
+
+.sign-up {
+  background: #008b45;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  border-radius: 30px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.sign-up font {
+  color: white;
+}
+
+.sign-up:hover {
+  background: #006e35;
+}
+
+.forgot {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #666;
+  text-decoration: none;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+/* Animazioni */
+.fade-up {
+    height: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.fade-up.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .login-left,
+  .login-right {
+    flex: none;
+    width: 100%;
+    height: 50%;
+    text-align: center;
+  }
+
+  .login-left {
+    padding: 40px 20px;
+  }
+
+  .login-right {
+    padding: 20px;
+  }
+}

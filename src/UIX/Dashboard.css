@@ -1,0 +1,68 @@
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: #f9fafb;
+  font-family: "Inter", sans-serif;
+  overflow: hidden;
+}
+
+/* Hero Dashboard */
+.hero-dashboard-container {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+  background: #f9fafb;
+}
+.section {
+  width: 100%;
+  height: 100%;
+}
+.section h2 {
+  font-size: 24px;
+  color: #111;
+  margin-bottom: 10px;
+}
+.section p {
+  color: #555;
+}
+
+
+/* Mobile Menu */
+.mobile-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: 0.2s;
+}
+.mobile-menu-btn:hover {
+  background: #15803d;
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-dashboard-container {
+    padding: 20px;
+  }
+}
