@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { FiFilter } from "react-icons/fi";
+import { Filter } from "lucide-react";
 
 export default function Clients({ openMenuButton, clients, setClients }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -147,7 +147,7 @@ export default function Clients({ openMenuButton, clients, setClients }) {
 
       {/* Filtro globale */}
       <div style={{ marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-        <FiFilter />
+        <Filter size={18} />
         <input
           type="text"
           placeholder="Cerca in tutte le colonne..."
