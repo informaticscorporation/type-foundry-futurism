@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../UIX/BookingSection.css";
-import { FiFilter } from "react-icons/fi";
+import { Filter } from "lucide-react";
 
 export default function BookingSection() {
   const [popupOpen, setPopupOpen] = useState(false);
@@ -159,7 +159,7 @@ export default function BookingSection() {
         <h1>Prenotazioni</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="btn-add" onClick={() => setShowFilters(!showFilters)} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <FiFilter size={20} /> Filtri
+            <Filter size={20} /> Filtri
           </button>
           <button className="btn-add" onClick={() => { setPopupOpen(true); setSelectedBooking(null); setNewBooking(initialBookingState); }}>
             Aggiungi Prenotazione
