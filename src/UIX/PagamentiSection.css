@@ -1,11 +1,2 @@
-/* PagamentiSection - Usa gli stessi stili di BookingSection */
-/* Gli stili neomorfici sono ereditati da BookingSection.css */
-
-/* Eventuali override specifici per Pagamenti */
-.booking-section-container {
-  background: linear-gradient(145deg, #f8fafc, #e2e8f0);
-  border-radius: 20px;
-  box-shadow: 
-    8px 8px 24px rgba(0, 0, 0, 0.06),
-    -4px -4px 16px rgba(255, 255, 255, 0.9);
-}
+/* PagamentiSection - Usa gli stessi stili di BookingSection.css */
+/* Nessun override neomorfico - stile semplice */
