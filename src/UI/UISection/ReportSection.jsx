@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { supabase } from "../../supabaseClient";
+import React, { useState, useMemo } from "react";
+import { usePrenotazioni, useVehicles, useUsers } from "../../hooks/useSupabase";
 import "../../UIX/ReportSection.css";
 import {
   BarChart3, Download, FileSpreadsheet, FileText, TrendingUp,
@@ -14,29 +14,11 @@ import { jsPDF } from "jspdf";
 import * as XLSX from "xlsx";
 
 export default function ReportSection() {
-  const [vehicles, setVehicles] = useState([]);
-  const [prenotazioni, setPrenotazioni] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: vehicles } = useVehicles();
+  const { data: prenotazioni, loading } = usePrenotazioni();
+  const { data: users } = useUsers();
   const [periodoFilter, setPeriodoFilter] = useState("tutti");
   const [annoFilter, setAnnoFilter] = useState(new Date().getFullYear());
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    setLoading(true);
-    const [{ data: veh }, { data: pren }, { data: usr }] = await Promise.all([
-      supabase.from("Vehicles").select("*"),
-      supabase.from("Prenotazioni").select("*").order("data_creazione", { ascending: false }),
-      supabase.from("Users").select("*"),
-    ]);
-    setVehicles(veh || []);
-    setPrenotazioni(pren || []);
-    setUsers(usr || []);
-    setLoading(false);
-  };
 
   // Filtro periodo
   const filteredPren = useMemo(() => {

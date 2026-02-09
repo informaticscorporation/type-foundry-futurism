@@ -1,36 +1,23 @@
- import React, { useEffect, useState } from "react";
- import { supabase } from "../../supabaseClient";
- import "../../UIX/ContrattiSection.css";
- import { FileText, Download, Eye, Search, Plus, X, Check } from "lucide-react";
- import SignatureCanvas from "react-signature-canvas";
- import { jsPDF } from "jspdf";
+import React, { useState } from "react";
+import { supabase } from "../../supabaseClient";
+import { usePrenotazioni, useVehicles, useUsers } from "../../hooks/useSupabase";
+import "../../UIX/ContrattiSection.css";
+import { FileText, Download, Eye, Search, Plus, X, Check } from "lucide-react";
+import SignatureCanvas from "react-signature-canvas";
+import { jsPDF } from "jspdf";
  
  export default function ContrattiSection() {
-   const [prenotazioni, setPrenotazioni] = useState([]);
-   const [users, setUsers] = useState([]);
-   const [vehicles, setVehicles] = useState([]);
-   const [searchTerm, setSearchTerm] = useState("");
-   const [filterStato, setFilterStato] = useState("");
-   const [selectedContratto, setSelectedContratto] = useState(null);
-   const [showViewPopup, setShowViewPopup] = useState(false);
-   const [showSignPopup, setShowSignPopup] = useState(false);
-   const [contractFiles, setContractFiles] = useState([]);
-   const [signatureRef, setSignatureRef] = useState(null);
-   const [loading, setLoading] = useState(false);
- 
-   // Fetch dati
-   useEffect(() => {
-     fetchData();
-   }, []);
- 
-   const fetchData = async () => {
-     const { data: prenData } = await supabase.from("Prenotazioni").select("*").order("data_creazione", { ascending: false });
-     const { data: usersData } = await supabase.from("Users").select("*");
-     const { data: vehData } = await supabase.from("Vehicles").select("*");
-     setPrenotazioni(prenData || []);
-     setUsers(usersData || []);
-     setVehicles(vehData || []);
-   };
+  const { data: prenotazioni, refetch: refetchPrenotazioni } = usePrenotazioni();
+  const { data: users } = useUsers();
+  const { data: vehicles } = useVehicles();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStato, setFilterStato] = useState("");
+  const [selectedContratto, setSelectedContratto] = useState(null);
+  const [showViewPopup, setShowViewPopup] = useState(false);
+  const [showSignPopup, setShowSignPopup] = useState(false);
+  const [contractFiles, setContractFiles] = useState([]);
+  const [signatureRef, setSignatureRef] = useState(null);
+  const [loading, setLoading] = useState(false);
  
    // Fetch files dal bucket per un contratto_id
    const fetchContractFiles = async (contrattoId) => {

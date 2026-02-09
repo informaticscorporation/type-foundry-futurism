@@ -1,25 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { supabase } from "../../supabaseClient";
+import React from "react";
+import { usePrenotazioni, useVehicles, useUsers } from "../../hooks/useSupabase";
 import "../../UIX/DashboardSection.css";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function DashboardSection() {
-  const [vehicles, setVehicles] = useState([]);
-  const [prenotazioni, setPrenotazioni] = useState([]);
-  const [users, setUsers] = useState([]);
-
-  // Fetch dati
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: vehData } = await supabase.from("Vehicles").select("*");
-      const { data: prenData } = await supabase.from("Prenotazioni").select("*");
-      const { data: usersData } = await supabase.from("Users").select("*");
-      setVehicles(vehData || []);
-      setPrenotazioni(prenData || []);
-      setUsers(usersData || []);
-    };
-    fetchData();
-  }, []);
+  const { data: vehicles } = useVehicles();
+  const { data: prenotazioni } = usePrenotazioni();
+  const { data: users } = useUsers();
 
   // Statistiche
   const totalVehicles = vehicles.length;

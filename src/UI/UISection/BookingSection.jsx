@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { usePrenotazioni, useVehicles, useUsers } from "../../hooks/useSupabase";
 import "../../UIX/BookingSection.css";
 import { Filter } from "lucide-react";
 
@@ -7,9 +8,9 @@ export default function BookingSection() {
   const [popupOpen, setPopupOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [filters, setFilters] = useState({ cliente: "", veicolo: "", stato: "" });
-  const [bookings, setBookings] = useState([]);
-  const [vehicles, setVehicles] = useState([]);
-  const [users, setUsers] = useState([]);
+  const { data: bookings, refetch: fetchBookings } = usePrenotazioni();
+  const { data: vehicles } = useVehicles();
+  const { data: users } = useUsers();
   const [showFilters, setShowFilters] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
@@ -57,31 +58,7 @@ export default function BookingSection() {
     return `${numbers}${letters}`;
   };
 
-  // --- Fetch dati
-  const fetchBookings = async () => {
-    const { data, error } = await supabase
-      .from("Prenotazioni")
-      .select("*")
-      .order("data_creazione", { ascending: false });
-    if (error) console.log(error);
-    else setBookings(data);
-  };
-
-  const fetchVehicles = async () => {
-    const { data } = await supabase.from("Vehicles").select("*");
-    setVehicles(data || []);
-  };
-
-  const fetchUsers = async () => {
-    const { data } = await supabase.from("Users").select("*");
-    setUsers(data || []);
-  };
-
-  useEffect(() => {
-    fetchBookings();
-    fetchVehicles();
-    fetchUsers();
-  }, []);
+  // fetchBookings, vehicles, users provided by hooks
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
