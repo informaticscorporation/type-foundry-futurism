@@ -1,32 +1,18 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { supabase } from "../../supabaseClient";
+import React, { useState, useMemo } from "react";
+import { usePrenotazioni, useVehicles, useUsers } from "../../hooks/useSupabase";
 import "../../UIX/CalendarBooking.css";
 
 export default function CalendarBooking() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [bookings, setBookings] = useState([]);
-  const [vehicles, setVehicles] = useState([]);
-  const [users, setUsers] = useState([]);
+  const { data: bookings } = usePrenotazioni();
+  const { data: vehicles } = useVehicles();
+  const { data: users } = useUsers();
   const [hoverInfo, setHoverInfo] = useState(null);
 
   // ---- Helpers ----
   const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
   const daysInMonth = lastDay.getDate();
-
-  // ---- Fetch Data ----
-  useEffect(() => {
-    async function fetchData() {
-      const { data: bookingsData } = await supabase.from("Prenotazioni").select("*");
-      const { data: vehiclesData } = await supabase.from("Vehicles").select("*");
-      const { data: usersData } = await supabase.from("Users").select("*");
-
-      setBookings(bookingsData || []);
-      setVehicles(vehiclesData || []);
-      setUsers(usersData || []);
-    }
-    fetchData();
-  }, []);
 
   // ---- Map Users ----
   const usersMap = useMemo(() => {

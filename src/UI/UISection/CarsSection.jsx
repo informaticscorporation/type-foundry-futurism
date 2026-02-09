@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { useVehicles } from "../../hooks/useSupabase";
 import "../../UIX/CarSection.css";
 
 export default function CarsSection() {
   const [popupOpen, setPopupOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [filters, setFilters] = useState({ marca: "", modello: "", categoria: "" });
-  const [vehicles, setVehicles] = useState([]);
+  const { data: vehicles, refetch: fetchVehicles } = useVehicles();
   const [previewImage, setPreviewImage] = useState(null);
 
   const initialVehicleState = {
@@ -112,17 +113,7 @@ export default function CarsSection() {
     );
   };
 
-  // ===== FETCH VEHICLES =====
-  const fetchVehicles = async () => {
-    const { data, error } = await supabase
-      .from("Vehicles")
-      .select("*")
-      .order("datacreazione", { ascending: false });
-    if (error) console.log(error);
-    else setVehicles(data || []);
-  };
-
-  useEffect(() => { fetchVehicles(); }, []);
+  // fetchVehicles provided by useVehicles hook
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });

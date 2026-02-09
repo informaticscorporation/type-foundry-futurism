@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { usePagamenti, useVehicles, useUsers, usePrenotazioni } from "../../hooks/useSupabase";
 import "../../UIX/PagamentiSection.css";
 import { Filter } from "lucide-react";
 
 export default function PagamentiSection() {
   const [popupOpen, setPopupOpen] = useState(false);
   const [filters, setFilters] = useState({ cliente: "", veicolo: "", prenotazione: "" });
-  const [pagamenti, setPagamenti] = useState([]);
-  const [vehicles, setVehicles] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [prenotazioni, setPrenotazioni] = useState([]);
+  const { data: pagamenti, refetch: fetchPagamenti } = usePagamenti();
+  const { data: vehicles } = useVehicles();
+  const { data: users } = useUsers();
+  const { data: prenotazioni } = usePrenotazioni();
   const [showFilters, setShowFilters] = useState(false);
   const [selectedPagamento, setSelectedPagamento] = useState(null);
 
@@ -37,34 +38,7 @@ export default function PagamentiSection() {
 
   const [newPagamento, setNewPagamento] = useState(initialPagamentoState);
 
-  // --- Fetch dati
-  const fetchPagamenti = async () => {
-    const { data, error } = await supabase.from("pagamenti").select("*").order("data_creazione", { ascending: false });
-    if (error) console.log(error);
-    else setPagamenti(data || []);
-  };
-
-  const fetchVehicles = async () => {
-    const { data } = await supabase.from("Vehicles").select("*");
-    setVehicles(data || []);
-  };
-
-  const fetchUsers = async () => {
-    const { data } = await supabase.from("Users").select("*");
-    setUsers(data || []);
-  };
-
-  const fetchPrenotazioni = async () => {
-    const { data } = await supabase.from("Prenotazioni").select("*");
-    setPrenotazioni(data || []);
-  };
-
-  useEffect(() => {
-    fetchPagamenti();
-    fetchVehicles();
-    fetchUsers();
-    fetchPrenotazioni();
-  }, []);
+  // fetch functions provided by hooks
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
