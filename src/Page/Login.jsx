@@ -1,31 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
+import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { supabase } from "../supabaseClient";
+import { useTranslation } from "../i18n/useTranslation";
 import "../UIX/Login.css";
 
 function Animation({ children }) {
   const ref = useRef(null);
-
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("show");
-        });
-      },
+      (entries) => { entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add("show"); }); },
       { threshold: 0.2 }
     );
-
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
-
   return <div ref={ref} className="fade-up">{children}</div>;
 }
 
 export default function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,99 +27,55 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setErrorMsg("Please enter email and password.");
-      return;
-    }
-
+    if (!email || !password) { setErrorMsg(t("login.enterCredentials")); return; }
     setLoading(true);
     setErrorMsg("");
-
     try {
-      // Controllo direttamente nella tabella Users
       const { data: userData, error } = await supabase
-        .from("Users")
-        .select("*")
-        .eq("email", email.toLowerCase())
-        .eq("password_hash", password)
-        .single();
-
-      if (error || !userData) {
-        setErrorMsg("Invalid email or password.");
-        return;
-      }
-
-      // Redirect in base al TipoUtente
+        .from("Users").select("*").eq("email", email.toLowerCase()).eq("password_hash", password).single();
+      if (error || !userData) { setErrorMsg(t("login.invalidCredentials")); return; }
       if (userData.TipoUtente === "Admin") {
         sessionStorage.setItem("userId", userData.id);
         sessionStorage.setItem("admin", true);
         navigate("/dashboard");
-      } else if (userData.tipoUtente === "Cliente") {
+      } else {
         sessionStorage.setItem("userId", userData.id);
         navigate("/");
-      } else {
-        navigate("/"); // fallback
       }
-
     } catch (err) {
       console.error(err);
-      setErrorMsg(err.message || "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+      setErrorMsg(err.message || "Login failed.");
+    } finally { setLoading(false); }
   };
 
   return (
     <div className="login-container">
-       <button className="back-btn" onClick={() => navigate(-1)}>
-          <ArrowLeft size={18} color="white" />
-        </button>
+      <button className="back-btn" onClick={() => navigate(-1)}><ArrowLeft size={18} color="white" /></button>
       <div className="login-left">
-
         <Animation>
-          <h1 className="logo">Create Your Account</h1>
-          <p className="subtitle">Register now and manage your car rentals with ease.</p>
-          <button className="sign-btn" onClick={() => navigate("/register")}>Sign Up</button>
+          <h1 className="logo">{t("login.createAccount")}</h1>
+          <p className="subtitle">{t("login.registerSubtitle")}</p>
+          <button className="sign-btn" onClick={() => navigate("/register")}>{t("login.signUp")}</button>
         </Animation>
       </div>
-
       <div className="login-right">
         <Animation>
-          <h2 className="title">Hello Again!</h2>
-          <p className="welcome">Welcome Back</p>
-
+          <h2 className="title">{t("login.helloAgain")}</h2>
+          <p className="welcome">{t("login.welcomeBack")}</p>
           <div className="form">
             {errorMsg && <div className="err">{errorMsg}</div>}
-
             <div className="input-box">
               <Mail className="icon" />
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <input type="email" placeholder={t("login.email")} value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-
             <div className="input-box">
               <Lock className="icon" />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <input type="password" placeholder={t("login.password")} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-
-            <button
-              className="sign-up"
-              onClick={handleLogin}
-              disabled={loading}
-            >
-              {loading ? "Signing In..." : "Sign In"}
+            <button className="sign-up" onClick={handleLogin} disabled={loading}>
+              {loading ? t("login.signingIn") : t("login.signIn")}
             </button>
-
-            <a href="#" className="forgot">Forgot Password</a>
+            <a href="#" className="forgot">{t("login.forgotPassword")}</a>
           </div>
         </Animation>
       </div>
