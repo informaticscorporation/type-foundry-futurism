@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
+import { useTranslation } from "../i18n/useTranslation";
 import "../UIX/Dashboard.css";
 import CarsSection from "./UISection/CarsSection";
 import BookingSection from "./UISection/BookingSection";
@@ -12,47 +13,35 @@ import ContrattiSection from "./UISection/ContrattiSection";
 import ReportSection from "./UISection/ReportSection";
 
 export default function HeroDashboard({ menuOpen, setMobileMenuOpen }) {
+  const { t } = useTranslation();
   const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setMobile(window.innerWidth <= 768);
-    handleResize(); // inizializza lo stato
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const openMenuButton = mobile ? (
     <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>
-      <Menu size={24} /> Apri Menu
+      <Menu size={24} /> {t("heroDashboard.openMenu")}
     </button>
   ) : null;
 
-  /* ======== RENDER CONTENUTO DINAMICO ======== */
   const renderContent = () => {
     switch (menuOpen) {
-      case "dashboard":
-        return <div className="section">{openMenuButton}<DashboardSection /></div>;
-      case "cars":
-        return <div className="section">{openMenuButton}<CarsSection /></div>;
-      case "contracts":
-        return <div className="section">{openMenuButton}<ContrattiSection /></div>;
-      case "bookings":
-        return <div className="section">{openMenuButton}<BookingSection /></div>;
-      case "calendarRentals":
-        return <div className="section">{openMenuButton}<CalendarBooking /></div>;
-      case "calendarInternal":
-        return <div className="section">{openMenuButton}<CalendarioInterno /></div>;
-     
-      case "clients":
-        return <div className="section">{openMenuButton}<ClientiSection /></div>;
-      case "payments":
-        return <div className="section">{openMenuButton}<PagamentiSection /></div>;
-      case "reports":
-        return <div className="section">{openMenuButton}<ReportSection /></div>;
-      case "settings":
-        return <div className="section">{openMenuButton}<h1>Impostazioni</h1></div>;
-      default:
-        return <div className="section">{openMenuButton}<h1>Dashboard</h1></div>;
+      case "dashboard": return <div className="section">{openMenuButton}<DashboardSection /></div>;
+      case "cars": return <div className="section">{openMenuButton}<CarsSection /></div>;
+      case "contracts": return <div className="section">{openMenuButton}<ContrattiSection /></div>;
+      case "bookings": return <div className="section">{openMenuButton}<BookingSection /></div>;
+      case "calendarRentals": return <div className="section">{openMenuButton}<CalendarBooking /></div>;
+      case "calendarInternal": return <div className="section">{openMenuButton}<CalendarioInterno /></div>;
+      case "clients": return <div className="section">{openMenuButton}<ClientiSection /></div>;
+      case "payments": return <div className="section">{openMenuButton}<PagamentiSection /></div>;
+      case "reports": return <div className="section">{openMenuButton}<ReportSection /></div>;
+      case "settings": return <div className="section">{openMenuButton}<h1>{t("heroDashboard.settings")}</h1></div>;
+      default: return <div className="section">{openMenuButton}<h1>{t("sidebar.dashboard")}</h1></div>;
     }
   };
 

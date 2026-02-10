@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "../UIX/Navbar.css";
+import { useTranslation } from "../i18n/useTranslation";
 
 export default function Navbar({ setMenuOpen, menuOpen }) {
+  const { t } = useTranslation();
   const [userSession, setUserSession] = useState(null);
   const [mobile, setMobile] = useState(false);
   const [widthWindow, setWidthWindow] = useState(window.innerWidth);
@@ -14,7 +16,6 @@ export default function Navbar({ setMenuOpen, menuOpen }) {
       setWidthWindow(window.innerWidth);
       setMobile(window.innerWidth <= 768);
     };
-
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
@@ -22,9 +23,8 @@ export default function Navbar({ setMenuOpen, menuOpen }) {
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
-
     if (userId) {
-      setUserSession({ id: userId }); // segna che esiste una sessione
+      setUserSession({ id: userId });
       fetchUserData(userId);
     }
   }, []);
@@ -36,14 +36,9 @@ export default function Navbar({ setMenuOpen, menuOpen }) {
         .select("nome, cognome")
         .eq("id", userId)
         .single();
-
       if (error) throw error;
       if (data) {
-        setUserSession((prev) => ({
-          ...prev,
-          nome: data.nome,
-          cognome: data.cognome,
-        }));
+        setUserSession((prev) => ({ ...prev, nome: data.nome, cognome: data.cognome }));
       }
     } catch (err) {
       console.error("Errore nel recupero utente:", err.message);
@@ -59,37 +54,24 @@ export default function Navbar({ setMenuOpen, menuOpen }) {
 
   return (
     <nav className="navbar">
-      {/* HAMBURGER MENU */}
-      <div
-        className={`hamburger ${menuOpen ? "open" : ""}`}
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
+      <div className={`hamburger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
         <span className="line top"></span>
         <span className="line bottom"></span>
       </div>
-
-      {/* LOGO CENTRALE */}
       <div className="logo-container" onClick={() => navigate("/")}>
         <img src="/logo.webp" alt="logo autonoleggio" />
       </div>
-
-      {/* SIGN IN / SIGN UP oppure “Hi, Nome Cognome” */}
       <div className="signin-container">
         {userSession ? (
           <div className="user-info">
             <span className="hi-text">
-              Hi, {userSession.nome} {userSession.cognome}
+              {t("navbar.hi")}, {userSession.nome} {userSession.cognome}
             </span>
-            <button className="logout-btn" onClick={handleLogout}>
-              Logout
-            </button>
+            <button className="logout-btn" onClick={handleLogout}>{t("navbar.logout")}</button>
           </div>
         ) : (
-          <button
-            className="signin-btn"
-            onClick={() => navigate("/login")}
-          >
-            {mobile ? "Sign up" : "Sign In / Sign Up"}
+          <button className="signin-btn" onClick={() => navigate("/login")}>
+            {mobile ? t("navbar.signUp") : t("navbar.signIn")}
           </button>
         )}
       </div>
