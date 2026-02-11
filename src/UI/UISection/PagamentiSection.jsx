@@ -9,18 +9,16 @@ const SERVER_URL = "https://server-noloe.fly.dev";
 
 export default function PagamentiSection() {
   const { t } = useTranslation();
-  const [popupOpen, setPopupOpen] = useState(false);
-  const [filters, setFilters] = useState({ cliente: "", veicolo: "", prenotazione: "" });
   const { data: pagamenti, refetch: fetchPagamenti } = usePagamenti();
   const { data: vehicles } = useVehicles();
   const { data: users } = useUsers();
   const { data: prenotazioni } = usePrenotazioni();
+
+  const [filters, setFilters] = useState({ cliente: "", veicolo: "", prenotazione: "" });
   const [showFilters, setShowFilters] = useState(false);
   const [selectedPagamento, setSelectedPagamento] = useState(null);
-  const [adminLoading, setAdminLoading] = useState(false);
 
   const initialPagamentoState = {
-    id: "",
     prenotazione_id: "",
     cliente_id: "",
     veicolo_id: "",
@@ -31,11 +29,6 @@ export default function PagamentiSection() {
     franchigia_stornata: false,
     pagamento_status: "da pagare",
     pagamento_metodo: "",
-    carta_titolare: "",
-    carta_numero: "",
-    carta_iban: "",
-    carta_scadenza: "",
-    carta_cvc: "",
     danni_descrizione: "",
     danni_importo: 0,
     danni_addebitato: false,
@@ -43,17 +36,17 @@ export default function PagamentiSection() {
 
   const [newPagamento, setNewPagamento] = useState(initialPagamentoState);
 
-  // fetch functions provided by hooks
-
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e) =>
     setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
 
   const filteredPagamenti = pagamenti.filter(
     (p) =>
-      (filters.cliente === "" || users.find(u => u.id === p.cliente_id)?.nome?.toLowerCase().includes(filters.cliente.toLowerCase())) &&
-      (filters.veicolo === "" || vehicles.find(v => v.id === p.veicolo_id)?.modello?.toLowerCase().includes(filters.veicolo.toLowerCase())) &&
-      (filters.prenotazione === "" || prenotazioni.find(pr => pr.id === p.prenotazione_id)?.contratto_id?.toLowerCase().includes(filters.prenotazione.toLowerCase()))
+      (filters.cliente === "" ||
+        users.find((u) => u.id === p.cliente_id)?.nome?.toLowerCase().includes(filters.cliente.toLowerCase())) &&
+      (filters.veicolo === "" ||
+        vehicles.find((v) => v.id === p.veicolo_id)?.modello?.toLowerCase().includes(filters.veicolo.toLowerCase())) &&
+      (filters.prenotazione === "" ||
+        prenotazioni.find((pr) => pr.id === p.prenotazione_id)?.contratto_id?.toLowerCase().includes(filters.prenotazione.toLowerCase()))
   );
 
   const handleInputChange = (e) => {
@@ -61,240 +54,182 @@ export default function PagamentiSection() {
     setNewPagamento({ ...newPagamento, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleRowClick = (pagamento) => {
-    setSelectedPagamento(pagamento);
-    setNewPagamento({ ...pagamento });
-    setPopupOpen(true);
+  const handleRowClick = (p) => {
+    setSelectedPagamento(p);
+    setNewPagamento({ ...p });
   };
 
-  // --- Salvataggio pagamento
-  const handleSavePagamento = async () => {
-    const pagamentoToSave = { ...newPagamento };
+  const closeSidebar = () => {
+    setSelectedPagamento(null);
+    setNewPagamento(initialPagamentoState);
+  };
 
-    ["totale_pagato","deposito","franchigia","franchigia_addebito","danni_importo"].forEach(f => pagamentoToSave[f] = Number(pagamentoToSave[f]) || 0);
+  const handleSavePagamento = async () => {
+    const payload = { ...newPagamento };
+    ["totale_pagato","deposito","franchigia","franchigia_addebito","danni_importo"].forEach(
+      (f) => (payload[f] = Number(payload[f]) || 0)
+    );
 
     let error;
-    if(selectedPagamento){
-      ({ error } = await supabase.from("pagamenti").update(pagamentoToSave).eq("id", selectedPagamento.id));
+    if (selectedPagamento) {
+      ({ error } = await supabase.from("pagamenti").update(payload).eq("id", selectedPagamento.id));
     } else {
-      ({ error } = await supabase.from("pagamenti").insert([pagamentoToSave]));
+      ({ error } = await supabase.from("pagamenti").insert([payload]));
     }
 
-    if (error) console.log("Errore salvataggio:", error);
-    else {
+    if (!error) {
       fetchPagamenti();
-      setPopupOpen(false);
-      setNewPagamento(initialPagamentoState);
-      setSelectedPagamento(null);
+      closeSidebar();
     }
   };
 
   const handleDeletePagamento = async () => {
-    if(selectedPagamento){
-      const { error } = await supabase.from("pagamenti").delete().eq("id", selectedPagamento.id);
-      if(error) console.log(error);
-      else {
-        fetchPagamenti();
-        setPopupOpen(false);
-        setNewPagamento(initialPagamentoState);
-        setSelectedPagamento(null);
-      }
-    }
+    if (!selectedPagamento) return;
+    await supabase.from("pagamenti").delete().eq("id", selectedPagamento.id);
+    fetchPagamenti();
+    closeSidebar();
   };
 
-  // --- Admin operations (capture, refund, reversal)
   const handleAdminOp = async (operation) => {
     if (!selectedPagamento) return;
-    setAdminLoading(true);
-    try {
-      let endpoint, body;
-      if (operation === "capture") {
-        const amount = prompt(t("paymentFlow.enterAmount"));
-        if (!amount) { setAdminLoading(false); return; }
-        const origTranId = prompt(t("paymentFlow.origTranId"));
-        if (!origTranId) { setAdminLoading(false); return; }
-        endpoint = "/payment-capture";
-        body = { origTranId, amountValue: Number(amount) };
-      } else if (operation === "refund") {
-        const amount = prompt(t("paymentFlow.enterAmount"));
-        if (!amount) { setAdminLoading(false); return; }
-        const origTranId = prompt(t("paymentFlow.origTranId"));
-        if (!origTranId) { setAdminLoading(false); return; }
-        endpoint = "/payment-refund";
-        body = { origTranId, amountValue: Number(amount) };
-      } else if (operation === "reversal") {
-        const origTranId = prompt(t("paymentFlow.origTranId"));
-        if (!origTranId) { setAdminLoading(false); return; }
-        endpoint = "/payment-reversal";
-        body = { origTranId };
-      }
+    let endpoint, body;
 
-      const res = await fetch(`${SERVER_URL}${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (data.error) {
-        alert(t("paymentFlow.operationError") + ": " + data.error);
-      } else {
-        alert(t(`paymentFlow.${operation}Success`));
-        fetchPagamenti();
-      }
-    } catch (err) {
-      console.error(err);
-      alert(t("paymentFlow.operationError"));
+    if (operation === "capture" || operation === "refund") {
+      const amount = prompt(t("paymentFlow.enterAmount"));
+      const origTranId = prompt(t("paymentFlow.origTranId"));
+      if (!amount || !origTranId) return;
+      endpoint = operation === "capture" ? "/payment-capture" : "/payment-refund";
+      body = { origTranId, amountValue: Number(amount) };
+    } else {
+      const origTranId = prompt(t("paymentFlow.origTranId"));
+      if (!origTranId) return;
+      endpoint = "/payment-reversal";
+      body = { origTranId };
     }
-    setAdminLoading(false);
+
+    await fetch(`${SERVER_URL}${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    fetchPagamenti();
   };
 
   return (
     <div className="booking-section-container">
-      {/* HEADER */}
       <div className="booking-header">
         <h1>Pagamenti</h1>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button className="btn-add" onClick={() => setShowFilters(!showFilters)} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <Filter size={20} /> Filtri
+        <div style={{ display: "flex", gap: 10 }}>
+          <button className="btn-add" onClick={() => setShowFilters(!showFilters)}>
+            <Filter size={18} /> Filtri
           </button>
-          <button className="btn-add" onClick={() => { setPopupOpen(true); setSelectedPagamento(null); setNewPagamento(initialPagamentoState); }}>
+          <button className="btn-add" onClick={closeSidebar}>
             Aggiungi Pagamento
           </button>
         </div>
       </div>
 
-      {/* FILTRI */}
       {showFilters && (
         <div className="booking-filters">
-          <input type="text" name="cliente" placeholder="Cliente" onChange={handleFilterChange} />
-          <input type="text" name="veicolo" placeholder="Veicolo" onChange={handleFilterChange} />
-          <input type="text" name="prenotazione" placeholder="Prenotazione" onChange={handleFilterChange} />
+          <input name="cliente" placeholder="Cliente" onChange={handleFilterChange} />
+          <input name="veicolo" placeholder="Veicolo" onChange={handleFilterChange} />
+          <input name="prenotazione" placeholder="Prenotazione" onChange={handleFilterChange} />
         </div>
       )}
 
-      {/* TABELLA */}
       <div className="booking-table-container">
         <table className="booking-table">
           <thead>
             <tr>
-              <th>Pagamento ID</th>
+              <th>ID</th>
               <th>Contratto</th>
               <th>Cliente</th>
               <th>Veicolo</th>
-              <th>Totale Pagato</th>
-              <th>Deposito</th>
-              <th>Franchigia</th>
-              <th>Franchigia Addebito</th>
-              <th>Pagamento Stato</th>
-              <th>Metodo Pagamento</th>
-              <th>Danni</th>
-              <th>Danni Addebitato</th>
+              <th>Totale</th>
+              <th>Stato</th>
             </tr>
           </thead>
           <tbody>
             {filteredPagamenti.map((p) => (
-              <tr key={p.id} onClick={() => handleRowClick(p)} className={selectedPagamento?.id === p.id ? "selected" : ""}>
+              <tr key={p.id} onClick={() => handleRowClick(p)}>
                 <td>{p.id}</td>
-                <td>{prenotazioni.find(pr => pr.id === p.prenotazione_id)?.contratto_id || "-"}</td>
-                <td>{users.find(u => u.id === p.cliente_id)?.nome || "-"}</td>
-                <td>{vehicles.find(v => v.id === p.veicolo_id)?.modello || "-"}</td>
+                <td>{prenotazioni.find(pr => pr.id === p.prenotazione_id)?.contratto_id}</td>
+                <td>{users.find(u => u.id === p.cliente_id)?.nome}</td>
+                <td>{vehicles.find(v => v.id === p.veicolo_id)?.modello}</td>
                 <td>{p.totale_pagato}</td>
-                <td>{p.deposito}</td>
-                <td>{p.franchigia}</td>
-                <td>{p.franchigia_addebito}</td>
                 <td>{p.pagamento_status}</td>
-                <td>{p.pagamento_metodo}</td>
-                <td>{p.danni_descrizione}</td>
-                <td>{p.danni_addebitato ? "Sì" : "No"}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* POPUP */}
-      {popupOpen && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <button className="popup-close" onClick={() => { setPopupOpen(false); setSelectedPagamento(null); }}>×</button>
-            <h2>{selectedPagamento ? "Modifica Pagamento" : "Aggiungi Pagamento"}</h2>
+      {selectedPagamento !== null && (
+        <div className="sidebar-overlay">
+          <div className="sidebar-form">
+            <button className="popup-close" onClick={closeSidebar}>✕</button>
 
-            <div className="form-step active">
-              <div className="form-field">
-                <label>Cliente</label>
-                <select name="cliente_id" value={newPagamento.cliente_id} onChange={handleInputChange}>
-                  <option value="">Seleziona cliente</option>
-                  {users.map(u => <option key={u.id} value={u.id}>{u.nome} {u.cognome}</option>)}
+            <h2>Modifica Pagamento</h2>
+
+            {/* FORM FIELDS */}
+            {[
+              ["Cliente", "cliente_id", users.map(u => ({ id: u.id, label: `${u.nome} ${u.cognome}` }))],
+              ["Veicolo", "veicolo_id", vehicles.map(v => ({ id: v.id, label: `${v.marca} ${v.modello}` }))],
+              ["Prenotazione", "prenotazione_id", prenotazioni.map(pr => ({ id: pr.id, label: pr.contratto_id }))]
+            ].map(([label, name, options]) => (
+              <div className="form-field" key={name}>
+                <label>{label}</label>
+                <select name={name} value={newPagamento[name]} onChange={handleInputChange}>
+                  <option value="">Seleziona {label}</option>
+                  {options.map(o => (
+                    <option key={o.id} value={o.id}>{o.label}</option>
+                  ))}
                 </select>
               </div>
-              <div className="form-field">
-                <label>Veicolo</label>
-                <select name="veicolo_id" value={newPagamento.veicolo_id} onChange={handleInputChange}>
-                  <option value="">Seleziona veicolo</option>
-                  {vehicles.map(v => <option key={v.id} value={v.id}>{v.marca} {v.modello}</option>)}
-                </select>
+            ))}
+
+            {[
+              ["Totale Pagato","totale_pagato"],
+              ["Deposito","deposito"],
+              ["Franchigia","franchigia"],
+              ["Addebito Franchigia","franchigia_addebito"]
+            ].map(([label,name])=>(
+              <div className="form-field" key={name}>
+                <label>{label}</label>
+                <input type="number" name={name} value={newPagamento[name]} onChange={handleInputChange}/>
               </div>
-              <div className="form-field">
-                <label>Prenotazione</label>
-                <select name="prenotazione_id" value={newPagamento.prenotazione_id} onChange={handleInputChange}>
-                  <option value="">Seleziona prenotazione</option>
-                  {prenotazioni.map(pr => <option key={pr.id} value={pr.id}>{pr.contratto_id}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label>Totale Pagato</label>
-                <input type="number" name="totale_pagato" value={newPagamento.totale_pagato} onChange={handleInputChange} />
-              </div>
-              <div className="form-field">
-                <label>Deposito</label>
-                <input type="number" name="deposito" value={newPagamento.deposito} onChange={handleInputChange} />
-              </div>
-              <div className="form-field">
-                <label>Franchigia</label>
-                <input type="number" name="franchigia" value={newPagamento.franchigia} onChange={handleInputChange} />
-              </div>
-              <div className="form-field">
-                <label>Franchigia Addebito</label>
-                <input type="number" name="franchigia_addebito" value={newPagamento.franchigia_addebito} onChange={handleInputChange} />
-              </div>
-              <div className="form-field">
-                <label>Pagamento Stato</label>
-                <select name="pagamento_status" value={newPagamento.pagamento_status} onChange={handleInputChange}>
-                  <option value="da pagare">Da pagare</option>
-                  <option value="parziale">Parziale</option>
-                  <option value="pagato">Pagato</option>
-                </select>
-              </div>
-              <div className="form-field">
-                <label>Metodo Pagamento</label>
-                <input type="text" name="pagamento_metodo" value={newPagamento.pagamento_metodo} onChange={handleInputChange} />
-              </div>
-              <div className="form-field">
-                <label>Danni Descrizione</label>
-                <textarea name="danni_descrizione" value={newPagamento.danni_descrizione} onChange={handleInputChange}></textarea>
-              </div>
-              <div className="form-field">
-                <label>Danni Addebitato</label>
-                <input type="checkbox" name="danni_addebitato" checked={newPagamento.danni_addebitato} onChange={handleInputChange} />
-              </div>
+            ))}
+
+            <div className="form-field">
+              <label>Stato Pagamento</label>
+              <select name="pagamento_status" value={newPagamento.pagamento_status} onChange={handleInputChange}>
+                <option value="da pagare">Da pagare</option>
+                <option value="parziale">Parziale</option>
+                <option value="pagato">Pagato</option>
+              </select>
             </div>
 
-            <div className="step-navigation">
-              <button className="popup-btn" onClick={handleSavePagamento}>{t("common.save")}</button>
-              {selectedPagamento && <button className="popup-btn delete" onClick={handleDeletePagamento}>{t("common.delete")}</button>}
-              {selectedPagamento && (
-                <div style={{ display: "flex", gap: "8px", marginTop: "8px", width: "100%" }}>
-                  <button className="popup-btn" disabled={adminLoading} onClick={() => handleAdminOp("capture")} style={{ flex: 1, background: "#2196F3", color: "#fff" }}>
-                    <Download size={14} /> {t("paymentFlow.capture")}
-                  </button>
-                  <button className="popup-btn" disabled={adminLoading} onClick={() => handleAdminOp("refund")} style={{ flex: 1, background: "#FF9800", color: "#fff" }}>
-                    <RotateCcw size={14} /> {t("paymentFlow.refund")}
-                  </button>
-                  <button className="popup-btn" disabled={adminLoading} onClick={() => handleAdminOp("reversal")} style={{ flex: 1, background: "#f44336", color: "#fff" }}>
-                    <XCircle size={14} /> {t("paymentFlow.reversal")}
-                  </button>
-                </div>
-              )}
+            <div className="form-field">
+              <label>Danni</label>
+              <textarea name="danni_descrizione" value={newPagamento.danni_descrizione} onChange={handleInputChange}/>
+            </div>
+
+            <div className="form-field">
+              <label>
+                <input type="checkbox" name="danni_addebitato" checked={newPagamento.danni_addebitato} onChange={handleInputChange}/>
+                Danni addebitati
+              </label>
+            </div>
+
+            <div className="popup-actions">
+              <button className="green-btn" onClick={handleSavePagamento}>{t("common.save")}</button>
+              <button className="red-btn" onClick={handleDeletePagamento}>{t("common.delete")}</button>
+            </div>
+              <div className="admin-panel">
+            <button className="admin-btn admin-op-capture" onClick={() => handleAdminOp("capture")}><Download size={14}/> Capture</button>
+            <button className="admin-btn admin-op-refund" onClick={() => handleAdminOp("refund")}><RotateCcw size={14}/> Refund</button>
+            <button className="admin-btn admin-op-reversal" onClick={() => handleAdminOp("reversal")}><XCircle size={14}/> Reversal</button>
             </div>
           </div>
         </div>

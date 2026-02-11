@@ -1,2 +1,254 @@
-/* PagamentiSection - Usa gli stessi stili di BookingSection.css */
-/* Nessun override neomorfico - stile semplice */
+/* ===================== CONTAINER PRINCIPALE ===================== */
+.booking-section-container {
+  background: transparent;
+  padding: 24px;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ===================== HEADER ===================== */
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.booking-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  position: relative;
+}
+
+.booking-header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 48px;
+  height: 4px;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  border-radius: 2px;
+}
+
+/* ===================== BUTTONS ===================== */
+.btn-add,
+.green-btn,
+.red-btn {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.green-btn:hover,
+.btn-add:hover {
+  background: #15803d;
+}
+
+.red-btn {
+  background: #dc2626;
+}
+
+.red-btn:hover {
+  background: #b91c1c;
+}
+
+/* ===================== FILTRI ===================== */
+.booking-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.booking-filters input {
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  min-width: 160px;
+}
+
+/* ===================== TABELLA ===================== */
+.booking-table-container {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.booking-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+  background: #ffffff;
+}
+
+.booking-table th,
+.booking-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.booking-table th {
+  background: #16a34a;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.booking-table tr:hover {
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+/* ===================== SIDEBAR OVERLAY ===================== */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ===================== SIDEBAR FORM ===================== */
+.sidebar-form {
+  width: 480px;
+  height: 100%;
+  background: #ffffff;
+  padding: 32px 24px;
+  overflow-y: auto;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: slideIn 0.3s ease;
+}
+
+.sidebar-form h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* ===================== CLOSE ===================== */
+.popup-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: #f1f5f9;
+  cursor: pointer;
+}
+
+/* ===================== FORM ===================== */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.form-field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.admin-panel {
+  margin-top: 28px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-panel-title {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+.admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin-bottom: 5px ;
+  color: #ffffff;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.admin-op-capture {
+    background: #16a34a;
+}
+.admin-op-refund {
+    background: #2563eb;
+}
+.admin-op-reversal {
+    background: #dc2626;
+}
+.admin-op-capture:hover {
+    background: #15803d;
+}
+.admin-op-refund:hover {
+    background: #1d4ed8;
+}
+.admin-op-reversal:hover {
+    background: #b91c1c;
+}   
+
+/* ===================== ACTIONS ===================== */
+.popup-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ===================== ANIMAZIONI ===================== */
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

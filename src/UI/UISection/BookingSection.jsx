@@ -5,8 +5,7 @@ import "../../UIX/BookingSection.css";
 import { Filter } from "lucide-react";
 
 export default function BookingSection() {
-  const [popupOpen, setPopupOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filters, setFilters] = useState({ cliente: "", veicolo: "", stato: "" });
   const { data: bookings, refetch: fetchBookings } = usePrenotazioni();
   const { data: vehicles } = useVehicles();
@@ -23,333 +22,190 @@ export default function BookingSection() {
     check_out: "",
     luogo_ritiro: "",
     luogo_restituzione: "",
-    stato: "prenotata",
+    stato: "prenotato",
     km_iniziali: 0,
     km_finali: 0,
-    km_previsti: 0,
-    km_extra: 0,
     prezzo_giornaliero: 0,
     giorni: 1,
-    totale_base: 0,
-    sconto: 0,
-    totale_pagato: 0,
     deposito: 0,
-    franchigia: 0,
-    assicurazione_tipo: "",
     pagamento_status: "da pagare",
-    pagamento_metodo: "",
-    penale_cancellazione: 0,
-    veicolo_in_manutenzione: false,
     note_cliente: "",
     note_interna: "",
-    checklist_ritiro: {},
-    checklist_restituzione: {},
     OraCheckin: "09:00",
     OraCheckOut: "18:00",
   };
 
   const [newBooking, setNewBooking] = useState(initialBookingState);
 
-  const generateBookingId = () => {
-    const numbers = Math.floor(Math.random() * 90 + 10);
-    const letters = Array.from({ length: 3 }, () =>
-      String.fromCharCode(65 + Math.floor(Math.random() * 26))
-    ).join("");
-    return `${numbers}${letters}`;
-  };
-
-  // fetchBookings, vehicles, users provided by hooks
-
-  const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const filteredBookings = bookings.filter(
-    (b) =>
-      (filters.cliente === "" || users.find(u => u.id === b.cliente_id)?.nome?.toLowerCase().includes(filters.cliente.toLowerCase())) &&
-      (filters.veicolo === "" || vehicles.find(v => v.id === b.veicolo_id)?.modello?.toLowerCase().includes(filters.veicolo.toLowerCase())) &&
-      (filters.stato === "" || b.stato.toLowerCase().includes(filters.stato.toLowerCase()))
-  );
-
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setNewBooking({ ...newBooking, [name]: type === "checkbox" ? checked : value });
+    const { name, value } = e.target;
+    setNewBooking({ ...newBooking, [name]: value });
   };
-
-  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 3));
-  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   const handleRowClick = (booking) => {
     setSelectedBooking(booking);
-    setNewBooking({ ...booking });
-    setPopupOpen(true);
-    setCurrentStep(1);
+    setNewBooking(booking);
+    setSidebarOpen(true);
   };
 
-  // --- Salvataggio prenotazione
   const handleSaveBooking = async () => {
     const bookingToSave = {
       ...newBooking,
-      id: selectedBooking ? selectedBooking.id : generateBookingId(),
-      contratto_id: selectedBooking ? selectedBooking.contratto_id : generateBookingId(),
+      id: selectedBooking?.id || Math.random().toString(36).substring(2, 8),
+      contratto_id: selectedBooking?.contratto_id || Math.random().toString(36).substring(2, 8),
     };
 
-    ["km_iniziali","km_finali","km_previsti","km_extra","prezzo_giornaliero","giorni","totale_base","sconto","totale_pagato","deposito","franchigia","penale_cancellazione"]
-      .forEach(f => bookingToSave[f] = Number(bookingToSave[f]) || 0);
-
     let error;
-    if(selectedBooking){
+    if (selectedBooking) {
       ({ error } = await supabase.from("Prenotazioni").update(bookingToSave).eq("id", selectedBooking.id));
     } else {
       ({ error } = await supabase.from("Prenotazioni").insert([bookingToSave]));
     }
 
-    if (error) console.log("Errore salvataggio:", error);
-    else {
+    if (!error) {
       fetchBookings();
-      setPopupOpen(false);
-      setNewBooking(initialBookingState);
+      setSidebarOpen(false);
       setSelectedBooking(null);
-      setCurrentStep(1);
+      setNewBooking(initialBookingState);
     }
   };
 
   const handleDeleteBooking = async () => {
-    if(selectedBooking){
-      const { error } = await supabase.from("Prenotazioni").delete().eq("id", selectedBooking.id);
-      if(error) console.log(error);
-      else {
-        fetchBookings();
-        setPopupOpen(false);
-        setNewBooking(initialBookingState);
-        setSelectedBooking(null);
-      }
-    }
+    if (!selectedBooking) return;
+    await supabase.from("Prenotazioni").delete().eq("id", selectedBooking.id);
+    fetchBookings();
+    setSidebarOpen(false);
+    setSelectedBooking(null);
   };
 
-  const statoOptions = ["libero", "checkin", "checkout", "annulato", "prenotato"];
+  const filteredBookings = bookings.filter(
+    (b) =>
+      (filters.cliente === "" ||
+        users.find(u => u.id === b.cliente_id)?.nome?.toLowerCase().includes(filters.cliente.toLowerCase())) &&
+      (filters.veicolo === "" ||
+        vehicles.find(v => v.id === b.veicolo_id)?.modello?.toLowerCase().includes(filters.veicolo.toLowerCase())) &&
+      (filters.stato === "" ||
+        b.stato.toLowerCase().includes(filters.stato.toLowerCase()))
+  );
 
   return (
     <div className="booking-section-container">
-      {/* HEADER */}
       <div className="booking-header">
         <h1>Prenotazioni</h1>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button className="btn-add" onClick={() => setShowFilters(!showFilters)} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <button className="btn-add" onClick={() => setShowFilters(!showFilters)}>
             <Filter size={20} /> Filtri
           </button>
-          <button className="btn-add" onClick={() => { setPopupOpen(true); setSelectedBooking(null); setNewBooking(initialBookingState); }}>
+          <button
+            className="btn-add"
+            onClick={() => {
+              setSelectedBooking(null);
+              setNewBooking(initialBookingState);
+              setSidebarOpen(true);
+            }}
+          >
             Aggiungi Prenotazione
           </button>
         </div>
       </div>
 
-      {/* FILTRI */}
       {showFilters && (
         <div className="booking-filters">
-          <input type="text" name="cliente" placeholder="Cliente" onChange={handleFilterChange} />
-          <input type="text" name="veicolo" placeholder="Veicolo" onChange={handleFilterChange} />
-          <input type="text" name="stato" placeholder="Stato" onChange={handleFilterChange} />
+          <input placeholder="Cliente" onChange={(e) => setFilters({ ...filters, cliente: e.target.value })} />
+          <input placeholder="Veicolo" onChange={(e) => setFilters({ ...filters, veicolo: e.target.value })} />
+          <input placeholder="Stato" onChange={(e) => setFilters({ ...filters, stato: e.target.value })} />
         </div>
       )}
 
-      {/* TABELLA */}
       <div className="booking-table-container">
         <table className="booking-table">
           <thead>
             <tr>
-              <th>ID Contratto</th>
+              <th>Contratto</th>
               <th>Cliente</th>
               <th>Veicolo</th>
               <th>Check-in</th>
-              <th>Ora Check-in</th>
               <th>Check-out</th>
-              <th>Ora Check-out</th>
               <th>Stato</th>
-              <th>Km iniziali</th>
-              <th>Km finali</th>
-              <th>Prezzo giornaliero</th>
-              <th>Giorni</th>
-              <th>Totale Base</th>
-              <th>Sconto</th>
-              <th>Totale Pagato</th>
-              <th>Deposito</th>
-              <th>Franchigia</th>
-              <th>Assicurazione</th>
-              <th>Pagamento Status</th>
-              <th>Pagamento Metodo</th>
-              <th>Note Cliente</th>
-              <th>Note Interna</th>
-              
             </tr>
           </thead>
           <tbody>
             {filteredBookings.map((b) => (
-              <tr key={b.id} onClick={() => handleRowClick(b)} className={selectedBooking?.id === b.id ? "selected" : ""}>
+              <tr key={b.id} onClick={() => handleRowClick(b)}>
                 <td>{b.contratto_id}</td>
-                <td>{users.find(u => u.id === b.cliente_id)?.nome || "-"}</td>
-                <td>{vehicles.find(v => v.id === b.veicolo_id)?.modello || "-"}</td>
+                <td>{users.find(u => u.id === b.cliente_id)?.nome}</td>
+                <td>{vehicles.find(v => v.id === b.veicolo_id)?.modello}</td>
                 <td>{b.check_in}</td>
-                <td>{b.OraCheckin}</td>
                 <td>{b.check_out}</td>
-                <td>{b.OraCheckOut}</td>
-                <td>
-                  {b.stato}
-                </td>
-                <td>{b.km_iniziali}</td>
-                <td>{b.km_finali}</td>
-                <td>{b.prezzo_giornaliero}</td>
-                <td>{b.giorni}</td>
-                <td>{b.totale_base}</td>
-                <td>{b.sconto}</td>
-                <td>{b.totale_pagato}</td>
-                <td>{b.deposito}</td>
-                <td>{b.franchigia}</td>
-                <td>{b.assicurazione_tipo}</td>
-                <td>{b.pagamento_status}</td>
-                <td>{b.pagamento_metodo}</td>
-                <td>{b.note_cliente}</td>
-                <td>{b.note_interna}</td>
-               
+                <td>{b.stato}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* POPUP */}
-      {popupOpen && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <button className="popup-close" onClick={() => { setPopupOpen(false); setSelectedBooking(null); }}>×</button>
-            <h2>{selectedBooking ? "Modifica Prenotazione" : "Aggiungi Prenotazione"}</h2>
+      {sidebarOpen && (
+        <div className="sidebar-overlay">
+          <div className="sidebar-form">
+            <button className="popup-close" onClick={() => setSidebarOpen(false)}>×</button>
 
-            {/* STEP 1 */}
-            {currentStep === 1 && (
-              <div className="form-step active">
-                <div className="form-field">
-                  <label>Cliente</label>
-                  <select name="cliente_id" value={newBooking.cliente_id} onChange={handleInputChange}>
-                    <option value="">Seleziona cliente</option>
-                    {users.map(u => <option key={u.id} value={u.id}>{u.nome} {u.cognome}</option>)}
-                  </select>
-                </div>
-                <div className="form-field">
-                  <label>Veicolo</label>
-                  <select name="veicolo_id" value={newBooking.veicolo_id} onChange={handleInputChange}>
-                    <option value="">Seleziona veicolo</option>
-                    {vehicles.map(v => <option key={v.id} value={v.id}>{v.marca} {v.modello}</option>)}
-                  </select>
-                </div>
-              </div>
-            )}
+            <h2>{selectedBooking ? "Modifica Prenotazione" : "Nuova Prenotazione"}</h2>
 
-            {/* STEP 2 */}
-            {currentStep === 2 && (
-  <div className="form-step active">
-    <div className="form-field">
-      <label>Check-in</label>
-      <input
-        type="date"
-        name="check_in"
-        value={newBooking.check_in}
-        onChange={handleInputChange}
-      />
-    </div>
-    <div className="form-field">
-      <label>Ora Check-in</label>
-      <input
-        type="time"
-        name="OraCheckin"
-        value={newBooking.OraCheckin}
-        onChange={handleInputChange}
-      />
-    </div>
-    <div className="form-field">
-      <label>Check-out</label>
-      <input
-        type="date"
-        name="check_out"
-        value={newBooking.check_out}
-        onChange={handleInputChange}
-      />
-    </div>
-    <div className="form-field">
-      <label>Stato</label>
-      <select
-        name="stato"
-        value={newBooking.stato}
-        onChange={handleInputChange}
-      >
-        <option value="libero">Libero</option>
-        <option value="checkin">Check-in</option>
-        <option value="checkout">Check-out</option>
-        <option value="annulato">Annullato</option>
-        <option value="prenotato">Prenotato</option>
-      </select>
-    </div>
-    <div className="form-field">
-      <label>Ora Check-out</label>
-      <input
-        type="time"
-        name="OraCheckOut"
-        value={newBooking.OraCheckOut}
-        onChange={handleInputChange}
-      />
-    </div>
-    <div className="form-field">
-      <label>Luogo ritiro</label>
-      <input
-        type="text"
-        name="luogo_ritiro"
-        value={newBooking.luogo_ritiro}
-        onChange={handleInputChange}
-      />
-    </div>
-    <div className="form-field">
-      <label>Luogo restituzione</label>
-      <input
-        type="text"
-        name="luogo_restituzione"
-        value={newBooking.luogo_restituzione}
-        onChange={handleInputChange}
-      />
-    </div>
-  </div>
-)}
+            <div className="form-field">
+              <label>Cliente</label>
+              <select name="cliente_id" value={newBooking.cliente_id} onChange={handleInputChange}>
+                <option value="">Seleziona</option>
+                {users.map(u => (
+                  <option key={u.id} value={u.id}>{u.nome} {u.cognome}</option>
+                ))}
+              </select>
+            </div>
 
-            {/* STEP 3 */}
-            {currentStep === 3 && (
-              <div className="form-step active">
-                <div className="form-field">
-                  <label>Prezzo giornaliero</label>
-                  <input type="number" name="prezzo_giornaliero" value={newBooking.prezzo_giornaliero} onChange={handleInputChange} />
-                </div>
-                <div className="form-field">
-                  <label>Giorni</label>
-                  <input type="number" name="giorni" value={newBooking.giorni} onChange={handleInputChange} />
-                </div>
-                <div className="form-field">
-                  <label>Deposito</label>
-                  <input type="number" name="deposito" value={newBooking.deposito} onChange={handleInputChange} />
-                </div>
-                <div className="form-field">
-                  <label>Stato pagamento</label>
-                  <select name="pagamento_status" value={newBooking.pagamento_status} onChange={handleInputChange}>
-                    <option value="da pagare">Da pagare</option>
-                    <option value="parziale">Parziale</option>
-                    <option value="pagato">Pagato</option>
-                  </select>
-                </div>
-              </div>
-            )}
+            <div className="form-field">
+              <label>Veicolo</label>
+              <select name="veicolo_id" value={newBooking.veicolo_id} onChange={handleInputChange}>
+                <option value="">Seleziona</option>
+                {vehicles.map(v => (
+                  <option key={v.id} value={v.id}>{v.marca} {v.modello}</option>
+                ))}
+              </select>
+            </div>
 
-            {/* NAV */}
-            <div className="step-navigation">
-              {currentStep > 1 && <button className="popup-btn" onClick={prevStep}>Indietro</button>}
-              {currentStep < 3 && <button className="popup-btn" onClick={nextStep}>Avanti</button>}
-              {currentStep === 3 && <button className="popup-btn" onClick={handleSaveBooking}>Salva</button>}
-              {selectedBooking && <button className="popup-btn delete" onClick={handleDeleteBooking}>Elimina</button>}
+            <div className="form-field">
+              <label>Check-in</label>
+              <input type="date" name="check_in" value={newBooking.check_in} onChange={handleInputChange} />
+            </div>
+
+            <div className="form-field">
+              <label>Check-out</label>
+              <input type="date" name="check_out" value={newBooking.check_out} onChange={handleInputChange} />
+            </div>
+
+            <div className="form-field">
+              <label>Prezzo giornaliero</label>
+              <input type="number" name="prezzo_giornaliero" value={newBooking.prezzo_giornaliero} onChange={handleInputChange} />
+            </div>
+
+            <div className="form-field">
+              <label>Giorni</label>
+              <input type="number" name="giorni" value={newBooking.giorni} onChange={handleInputChange} />
+            </div>
+
+            <div className="form-field">
+              <label>Deposito</label>
+              <input type="number" name="deposito" value={newBooking.deposito} onChange={handleInputChange} />
+            </div>
+
+            <div className="form-field">
+              <label>Note Cliente</label>
+              <textarea name="note_cliente" value={newBooking.note_cliente} onChange={handleInputChange} />
+            </div>
+
+            <div className="popup-actions">
+              <button className="green-btn" onClick={handleSaveBooking}>Salva</button>
+              {selectedBooking && (
+                <button className="red-btn" onClick={handleDeleteBooking}>Elimina</button>
+              )}
             </div>
           </div>
         </div>

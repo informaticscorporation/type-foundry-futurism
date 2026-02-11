@@ -4,40 +4,39 @@ import "../../UIX/CalendarBooking.css";
 
 export default function CalendarBooking() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const { data: bookings } = usePrenotazioni();
-  const { data: vehicles } = useVehicles();
-  const { data: users } = useUsers();
+  const { data: bookings = [] } = usePrenotazioni();
+  const { data: vehicles = [] } = useVehicles();
+  const { data: users = [] } = useUsers();
   const [hoverInfo, setHoverInfo] = useState(null);
 
-  // ---- Helpers ----
-  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  // ---- Date helpers ----
+  const lastDay = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0
+  );
   const daysInMonth = lastDay.getDate();
-
-  // ---- Map Users ----
-  const usersMap = useMemo(() => {
-    const map = {};
-    users.forEach((u) => {
-      map[u.id] = u;
-    });
-    return map;
-  }, [users]);
-
-  // ---- Utils ----
-  const toDateOnly = (d) => {
-    if (!d) return null;
-    const dt = new Date(d);
-    return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-  };
 
   const formatKey = (date) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-    return `${y}-${m}-${dd}`;
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   };
 
-  // ---- Bookings → Vehicle → Day ----
+  const toDateOnly = (d) => {
+    const dt = new Date(d);
+    return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  };
+
+  // ---- Users map ----
+  const usersMap = useMemo(() => {
+    const map = {};
+    users.forEach((u) => (map[u.id] = u));
+    return map;
+  }, [users]);
+
+  // ---- Build booking map vehicle -> date -> bookings ----
   const bookingsByVehicleDate = useMemo(() => {
     const map = {};
 
@@ -46,7 +45,6 @@ export default function CalendarBooking() {
 
       let start = toDateOnly(b.check_in);
       let end = toDateOnly(b.check_out);
-
       if (start > end) [start, end] = [end, start];
 
       const vKey = String(b.veicolo_id);
@@ -64,65 +62,61 @@ export default function CalendarBooking() {
     return map;
   }, [bookings]);
 
-  // ---- Determine Cell Status ----
+  // ---- Cell state ----
   const cellInfoFor = (vehicle, dateKey) => {
     if (vehicle?.inmanutenzione) {
       return { value: "M", className: "cell-maint" };
     }
 
-    const arr = bookingsByVehicleDate[String(vehicle.id)]?.[dateKey] || [];
+    const arr =
+      bookingsByVehicleDate[String(vehicle.id)]?.[dateKey] || [];
 
     if (arr.length === 0) return { value: "0", className: "cell-free" };
     if (arr.length >= 2) return { value: "2", className: "cell-booked-multi" };
     return { value: "1", className: "cell-booked" };
   };
 
-  // ---- Month Day Keys ----
+  // ---- Month keys ----
   const monthDayKeys = useMemo(() => {
     const keys = [];
     for (let d = 1; d <= daysInMonth; d++) {
-      keys.push(formatKey(new Date(currentDate.getFullYear(), currentDate.getMonth(), d)));
+      keys.push(
+        formatKey(
+          new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            d
+          )
+        )
+      );
     }
     return keys;
   }, [currentDate, daysInMonth]);
 
   const prevMonth = () =>
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    );
 
   const nextMonth = () =>
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    );
 
   const monthNames = [
     "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
     "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",
   ];
 
-  // ---- Hover handler with automatic reposition ----
+  // ---- Hover ----
   const handleCellEnter = (e, vehicle, dateKey) => {
     const rect = e.currentTarget.getBoundingClientRect();
-
-    const padding = 10;
-    const cardWidth = 310;
-    const cardHeight = 280;
-
-    let left = rect.right + 8;
-    let top = rect.top;
-
-    // adjust if outside right
-    if (left + cardWidth > window.innerWidth - padding) {
-      left = rect.left - cardWidth - 8;
-    }
-
-    // adjust bottom overflow
-    if (top + cardHeight > window.innerHeight - padding) {
-      top = window.innerHeight - cardHeight - padding;
-    }
-
-    const bookingsList = bookingsByVehicleDate[String(vehicle.id)]?.[dateKey] || [];
+    const bookingsList =
+      bookingsByVehicleDate[String(vehicle.id)]?.[dateKey] || [];
 
     setHoverInfo({
-      x: left,
-      y: top,
+      x: rect.right + 8,
+      y: rect.top,
       bookings: bookingsList,
       vehicle,
       dateKey,
@@ -135,24 +129,35 @@ export default function CalendarBooking() {
     <div className="cal-table-container">
       <div className="cal-table-header">
         <button onClick={prevMonth}>◀</button>
-        <h3>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
+        <h3>
+          {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+        </h3>
         <button onClick={nextMonth}>▶</button>
       </div>
 
-      <div className="cal-table" style={{ "--days": daysInMonth }}>
-        <div className="cal-row cal-row-header">
-          <div className="cal-col cal-col-vehicle">Veicolo</div>
-
-          {monthDayKeys.map((k, idx) => (
-            <div key={k} className="cal-col cal-col-day">
-              <div className="day-number">{idx + 1}</div>
-            </div>
-          ))}
+      {/* GRID UNICA */}
+      <div
+        className="cal-table"
+        style={{
+          gridTemplateColumns: `220px repeat(${daysInMonth}, 48px)`
+        }}
+      >
+        {/* HEADER */}
+        <div className="cal-cell cal-header cal-vehicle-header">
+          Veicolo
         </div>
 
+        {monthDayKeys.map((k, idx) => (
+          <div key={k} className="cal-cell cal-header">
+            {idx + 1}
+          </div>
+        ))}
+
+        {/* ROWS */}
         {vehicles.map((v) => (
-          <div key={v.id} className="cal-row">
-            <div className="cal-col cal-col-vehicle">
+          <React.Fragment key={v.id}>
+            {/* Vehicle sticky column */}
+            <div className="cal-cell cal-vehicle-cell">
               <div className="veh-label">
                 <div className="veh-targa">{v.targa || "-"}</div>
                 <div className="veh-model">
@@ -161,66 +166,45 @@ export default function CalendarBooking() {
               </div>
             </div>
 
+            {/* Days */}
             {monthDayKeys.map((k) => {
               const info = cellInfoFor(v, k);
               return (
                 <div
                   key={`${v.id}-${k}`}
-                  className={`cal-col cal-col-day-cell ${info.className}`}
-                  onMouseEnter={(e) => handleCellEnter(e, v, k)}
+                  className={`cal-cell cal-day-cell ${info.className}`}
+                  onMouseEnter={(e) =>
+                    handleCellEnter(e, v, k)
+                  }
                   onMouseLeave={handleCellLeave}
                 >
                   <div className="cell-value">{info.value}</div>
                 </div>
               );
             })}
-          </div>
+          </React.Fragment>
         ))}
       </div>
 
-      {/* ---- Hover Card ---- */}
+      {/* Hover card */}
       {hoverInfo && (
         <div
           className="hover-card"
           style={{ top: hoverInfo.y, left: hoverInfo.x }}
           onMouseLeave={handleCellLeave}
         >
-          <div className="hover-card-header">
+          <div>
             <strong>{hoverInfo.vehicle.targa}</strong>
-            <div className="hover-date">{hoverInfo.dateKey}</div>
           </div>
-
-          {hoverInfo.bookings.length === 0 && (
-            <div className="hover-empty">Nessuna prenotazione</div>
-          )}
+          <div>{hoverInfo.dateKey}</div>
 
           {hoverInfo.bookings.map((b) => {
             const user = usersMap[b.cliente_id];
-
             return (
-              <div key={b.id} className="hover-booking">
-                <div className="hb-top">
-                  <div><strong>ID:</strong> {b.id}</div>
-                  <div><strong>Stato:</strong> {b.stato}</div>
-                </div>
-
-                <div className="hb-body">
-                  <div>
-                    <strong>Cliente:</strong>{" "}
-                    {user ? `${user.nome} ${user.cognome}` : `ID ${b.cliente_id}`}
-                  </div>
-
-                  <div><strong>Check-in:</strong> {b.check_in} {b.OraCheckin || ""}</div>
-                  <div><strong>Check-out:</strong> {b.check_out} {b.OraCheckOut || ""}</div>
-                  <div><strong>Giorni:</strong> {b.giorni}</div>
-                  <div><strong>Prezzo/g:</strong> {b.prezzo_giornaliero}</div>
-
-                  {b.note_cliente && (
-                    <div className="note">
-                      <strong>Note:</strong> {b.note_cliente}
-                    </div>
-                  )}
-                </div>
+              <div key={b.id} style={{ marginTop: 6, fontSize: 13 }}>
+                {user
+                  ? `${user.nome} ${user.cognome}`
+                  : `ID ${b.cliente_id}`}
               </div>
             );
           })}

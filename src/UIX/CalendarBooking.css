@@ -1,10 +1,11 @@
-/* layout */
+/* ===== Container ===== */
 .cal-table-container {
   font-family: Arial, sans-serif;
   padding: 12px;
   position: relative;
 }
 
+/* ===== Header mese ===== */
 .cal-table-header {
   display: flex;
   gap: 12px;
@@ -21,143 +22,128 @@
   cursor: pointer;
 }
 
-/* grid-like table */
+/* ===== GRID PRINCIPALE ===== */
 .cal-table {
-  border-radius: 8px;
+  display: grid;
   overflow: auto;
   border: 1px solid #e5e7eb;
-  max-width: 100%;
+  border-radius: 8px;
+  max-height: 72vh;
+  background: white;
 }
 
-.cal-row {
-  display: grid;
-  grid-template-columns: 220px repeat(var(--days), 48px);
-  align-items: center;
+/* ===== CELLE BASE ===== */
+.cal-cell {
+  border-right: 1px solid #f3f4f6;
   border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  background: white;
+  box-sizing: border-box;
 }
 
-/* header uses CSS variable for dynamic columns; set it inline via style if needed */
-.cal-row-header {
-  background: #fafafa;
-  font-weight: 700;
+/* ===== HEADER GIORNI (sticky top) ===== */
+.cal-header {
   position: sticky;
   top: 0;
-  z-index: 3;
+  z-index: 5;
+  background: #fafafa;
+  font-weight: 700;
 }
 
-/* columns */
-.cal-col {
-  padding: 6px;
-  border-right: 1px solid #f3f4f6;
-  min-height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cal-col-vehicle {
+/* ===== COLONNA VEICOLO (sticky left) ===== */
+.cal-vehicle-header {
+  position: sticky;
+  left: 0;
+  z-index: 6;
   justify-content: flex-start;
   padding-left: 12px;
-  background: #fff;
-  min-width: 220px;
+  background: #fafafa;
 }
 
-.cal-col-day {
-  min-width: 48px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.cal-vehicle-cell {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  justify-content: flex-start;
+  padding-left: 12px;
+  background: white;
 }
 
-.cal-col-day-cell {
-  min-width: 48px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+/* ===== Celle giorni ===== */
+.cal-day-cell {
   cursor: default;
-  transition: transform 0.08s ease;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
-.cal-col-day-cell:hover {
+.cal-day-cell:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-/* vehicle label */
-.veh-label { display:flex; flex-direction:column; gap:4px; }
-.veh-targa { font-weight:700; }
-.veh-model { font-size: 12px; color: #555; }
+/* ===== Label veicolo ===== */
+.veh-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-/* cell states */
-/* verde = libero */
-.cell-free { background: #dff7e6; color: #0b3b18; }
+.veh-targa {
+  font-weight: 700;
+}
 
-/* giallo = manutenzione */
-.cell-maint { background: #fff2cc; color: #7a3100; }
+.veh-model {
+  font-size: 12px;
+  color: #555;
+}
 
-/* prenotato = giallo */
-.cell-book { background: #fff2cc; color: #d87300; }
+/* ===== Stati celle ===== */
+.cell-free {
+  background: #dff7e6;
+  color: #0b3b18;
+}
 
-/* prenotazione: rosso chiaro */
-.cell-booked { background: #ffd6d6; color: #6b0000; }
+.cell-maint {
+  background: #fff2cc;
+  color: #7a3100;
+}
 
-/* prenotazione multipla / conflitto: rosso scuro */
-.cell-booked-multi { background: #ff8a8a; color: #3b0000; }
+.cell-booked {
+  background: #ffd6d6;
+  color: #6b0000;
+}
 
-/* value shown */
+.cell-booked-multi {
+  background: #ff8a8a;
+  color: #3b0000;
+}
+
+/* ===== Valore numerico ===== */
 .cell-value {
   font-size: 14px;
   font-weight: 700;
 }
 
-/* small multi-dot indicator */
-.multi-dot {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.2);
-}
-
-/* hover card */
+/* ===== Hover card ===== */
 .hover-card {
   position: fixed;
   z-index: 9999;
-  width: 320px;
-  max-height: 400px;
+  width: 280px;
+  max-height: 360px;
   overflow: auto;
   background: white;
   border-radius: 10px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
   padding: 12px;
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 13px;
 }
 
-.hover-card-header {
-  display:flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.hover-booking {
-  border-top: 1px dashed #eee;
-  padding-top: 8px;
-  margin-top: 8px;
-}
-
-.hb-top { display:flex; justify-content:space-between; gap:8px; font-size:13px; }
-.hb-body { font-size:13px; margin-top:6px; color:#333; }
-.hover-empty { color:#666; font-size:13px }
-
-/* responsive */
+/* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .cal-row { grid-template-columns: 160px repeat(var(--days), 40px); }
-  .cal-col-day, .cal-col-day-cell { min-width: 40px; height: 48px; }
-  .cal-col-vehicle { min-width: 160px; }
+  .cal-cell {
+    min-height: 46px;
+  }
 }

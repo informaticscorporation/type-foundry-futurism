@@ -22,7 +22,6 @@
   font-size: 1.8rem;
   font-weight: 700;
   color: #0f172a;
-  letter-spacing: -0.02em;
   position: relative;
 }
 
@@ -39,7 +38,8 @@
 
 /* ===================== BUTTONS ===================== */
 .btn-add,
-.popup-btn {
+.green-btn,
+.red-btn {
   background: #16a34a;
   color: #ffffff;
   border: none;
@@ -48,20 +48,18 @@
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
-  transition: background 0.2s ease;
 }
 
-.btn-add:hover,
-.popup-btn:hover {
+.green-btn:hover,
+.btn-add:hover {
   background: #15803d;
 }
 
-/* Pulsante elimina rosso */
-.popup-btn.delete {
+.red-btn {
   background: #dc2626;
 }
 
-.popup-btn.delete:hover {
+.red-btn:hover {
   background: #b91c1c;
 }
 
@@ -71,36 +69,20 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 24px;
-  align-items: center;
 }
 
-.booking-filters input,
-.booking-filters select {
+.booking-filters input {
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   min-width: 160px;
-  background: #ffffff;
-  font-size: 14px;
-  color: #374151;
-}
-
-.booking-filters input:focus,
-.booking-filters select:focus {
-  outline: none;
-  border-color: #16a34a;
-}
-
-.booking-filters input::placeholder {
-  color: #94a3b8;
 }
 
 /* ===================== TABELLA ===================== */
 .booking-table-container {
   overflow-x: auto;
-  width: 100%;
-  border-radius: 8px;
   border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 
 .booking-table {
@@ -113,22 +95,15 @@
 .booking-table th,
 .booking-table td {
   padding: 12px 16px;
-  text-align: left;
-  font-size: 14px;
   border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
 }
 
 .booking-table th {
   background: #16a34a;
   color: #ffffff;
-  font-weight: 600;
   text-transform: uppercase;
   font-size: 12px;
-  letter-spacing: 0.05em;
-}
-
-.booking-table tbody tr {
-  transition: background 0.15s ease;
 }
 
 .booking-table tr:hover {
@@ -136,95 +111,60 @@
   cursor: pointer;
 }
 
-/* Riga selezionata */
-.booking-table tr.selected {
-  background: #dcfce7 !important;
-}
-
-/* ===================== POPUP ===================== */
-.popup-overlay {
+/* ===================== SIDEBAR OVERLAY ===================== */
+.sidebar-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 2000;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  z-index: 1000;
+  justify-content: flex-end;
   animation: fadeIn 0.2s ease;
 }
 
-.popup-content {
+/* ===================== SIDEBAR FORM ===================== */
+.sidebar-form {
+  width: 480px;
+  height: 100%;
   background: #ffffff;
-  padding: 32px;
-  width: 100%;
-  max-width: 700px;
-  max-height: 85vh;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  padding: 32px 24px;
+  overflow-y: auto;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
-  overflow-y: auto;
-  animation: popupIn 0.3s ease;
+  gap: 18px;
+  animation: slideIn 0.3s ease;
 }
 
-.popup-content h2 {
+.sidebar-form h2 {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
+/* ===================== CLOSE ===================== */
 .popup-close {
   position: absolute;
   top: 16px;
   right: 16px;
   width: 32px;
   height: 32px;
-  background: #f1f5f9;
-  border: none;
   border-radius: 8px;
-  font-size: 1.2rem;
+  border: none;
+  background: #f1f5f9;
   cursor: pointer;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.popup-close:hover {
-  color: #0f172a;
-  background: #e2e8f0;
 }
 
 /* ===================== FORM ===================== */
-.form-step {
-  display: none;
-  gap: 20px;
-  width: 100%;
-}
-
-.form-step.active {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-}
-
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 100%;
+  gap: 6px;
 }
 
 .form-field label {
-  font-size: 0.875rem;
+  font-size: 13px;
   font-weight: 600;
   color: #475569;
 }
@@ -232,78 +172,33 @@
 .form-field input,
 .form-field select,
 .form-field textarea {
-  padding: 12px 14px;
-  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
   border-radius: 8px;
+  border: 1px solid #e2e8f0;
   font-size: 14px;
-  background: #ffffff;
-  color: #1e293b;
 }
 
-.form-field input:focus,
-.form-field select:focus,
-.form-field textarea:focus {
-  outline: none;
-  border-color: #16a34a;
+.form-field textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 
-.form-field input::placeholder {
-  color: #94a3b8;
-}
-
-/* ===================== STEP NAVIGATION ===================== */
-.step-navigation {
+/* ===================== ACTIONS ===================== */
+.popup-actions {
+  margin-top: auto;
   display: flex;
-  justify-content: center;
   gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 24px;
   padding-top: 16px;
   border-top: 1px solid #e2e8f0;
 }
 
 /* ===================== ANIMAZIONI ===================== */
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-@keyframes popupIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(-20px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
-}
-
-/* ===================== RESPONSIVO ===================== */
-@media (max-width: 768px) {
-  .booking-section-container {
-    padding: 16px;
-  }
-
-  .booking-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .form-step.active {
-    flex-direction: column;
-  }
-
-  .popup-content {
-    padding: 24px 20px;
-  }
-
-  .booking-filters {
-    flex-direction: column;
-  }
-
-  .booking-filters input,
-  .booking-filters select {
-    min-width: 100%;
-  }
 }
