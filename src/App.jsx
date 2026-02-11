@@ -12,6 +12,7 @@ import Login from "./Page/Login";
 import Rents from "./Page/Rents";
 import Rent from "./Page/Rent";
 import Pagamento from "./Page/Pagamento";
+import PagamentoSuccesso from "./Page/PagamentoSuccesso";
 import UserArea from "./Page/UserArea";
 import Dashboard from "./Page/Dashboard";
 import Pronotation from "./Page/Prenotation";
@@ -34,7 +35,7 @@ function App() {
           <Route element={<PrivateRoute isAuth={true} />}>
             <Route path="/prenotation/:id" element={<Pronotation />} />
             <Route path="/pagamento" element={<Pagamento/>} />
-            <Route path="/pagamento/successo" element={<Pagamento />} />
+            <Route path="/pagamento/successo" element={<PagamentoSuccesso />} />
             <Route path="/userarea" element={<UserArea />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/dashboard" element={<Dashboard />} />

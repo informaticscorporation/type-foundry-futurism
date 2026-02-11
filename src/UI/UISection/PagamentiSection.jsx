@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { usePagamenti, useVehicles, useUsers, usePrenotazioni } from "../../hooks/useSupabase";
+import { useTranslation } from "../../i18n/useTranslation";
 import "../../UIX/PagamentiSection.css";
-import { Filter } from "lucide-react";
+import { Filter, Download, RotateCcw, XCircle } from "lucide-react";
+
+const SERVER_URL = "https://server-noloe.fly.dev";
 
 export default function PagamentiSection() {
+  const { t } = useTranslation();
   const [popupOpen, setPopupOpen] = useState(false);
   const [filters, setFilters] = useState({ cliente: "", veicolo: "", prenotazione: "" });
   const { data: pagamenti, refetch: fetchPagamenti } = usePagamenti();
@@ -13,6 +17,7 @@ export default function PagamentiSection() {
   const { data: prenotazioni } = usePrenotazioni();
   const [showFilters, setShowFilters] = useState(false);
   const [selectedPagamento, setSelectedPagamento] = useState(null);
+  const [adminLoading, setAdminLoading] = useState(false);
 
   const initialPagamentoState = {
     id: "",
@@ -95,6 +100,52 @@ export default function PagamentiSection() {
         setSelectedPagamento(null);
       }
     }
+  };
+
+  // --- Admin operations (capture, refund, reversal)
+  const handleAdminOp = async (operation) => {
+    if (!selectedPagamento) return;
+    setAdminLoading(true);
+    try {
+      let endpoint, body;
+      if (operation === "capture") {
+        const amount = prompt(t("paymentFlow.enterAmount"));
+        if (!amount) { setAdminLoading(false); return; }
+        const origTranId = prompt(t("paymentFlow.origTranId"));
+        if (!origTranId) { setAdminLoading(false); return; }
+        endpoint = "/payment-capture";
+        body = { origTranId, amountValue: Number(amount) };
+      } else if (operation === "refund") {
+        const amount = prompt(t("paymentFlow.enterAmount"));
+        if (!amount) { setAdminLoading(false); return; }
+        const origTranId = prompt(t("paymentFlow.origTranId"));
+        if (!origTranId) { setAdminLoading(false); return; }
+        endpoint = "/payment-refund";
+        body = { origTranId, amountValue: Number(amount) };
+      } else if (operation === "reversal") {
+        const origTranId = prompt(t("paymentFlow.origTranId"));
+        if (!origTranId) { setAdminLoading(false); return; }
+        endpoint = "/payment-reversal";
+        body = { origTranId };
+      }
+
+      const res = await fetch(`${SERVER_URL}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert(t("paymentFlow.operationError") + ": " + data.error);
+      } else {
+        alert(t(`paymentFlow.${operation}Success`));
+        fetchPagamenti();
+      }
+    } catch (err) {
+      console.error(err);
+      alert(t("paymentFlow.operationError"));
+    }
+    setAdminLoading(false);
   };
 
   return (
@@ -229,8 +280,21 @@ export default function PagamentiSection() {
             </div>
 
             <div className="step-navigation">
-              <button className="popup-btn" onClick={handleSavePagamento}>Salva</button>
-              {selectedPagamento && <button className="popup-btn delete" onClick={handleDeletePagamento}>Elimina</button>}
+              <button className="popup-btn" onClick={handleSavePagamento}>{t("common.save")}</button>
+              {selectedPagamento && <button className="popup-btn delete" onClick={handleDeletePagamento}>{t("common.delete")}</button>}
+              {selectedPagamento && (
+                <div style={{ display: "flex", gap: "8px", marginTop: "8px", width: "100%" }}>
+                  <button className="popup-btn" disabled={adminLoading} onClick={() => handleAdminOp("capture")} style={{ flex: 1, background: "#2196F3", color: "#fff" }}>
+                    <Download size={14} /> {t("paymentFlow.capture")}
+                  </button>
+                  <button className="popup-btn" disabled={adminLoading} onClick={() => handleAdminOp("refund")} style={{ flex: 1, background: "#FF9800", color: "#fff" }}>
+                    <RotateCcw size={14} /> {t("paymentFlow.refund")}
+                  </button>
+                  <button className="popup-btn" disabled={adminLoading} onClick={() => handleAdminOp("reversal")} style={{ flex: 1, background: "#f44336", color: "#fff" }}>
+                    <XCircle size={14} /> {t("paymentFlow.reversal")}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, CreditCard, Check } from "lucide-react";
-import { supabase } from "../supabaseClient";
+import { ArrowLeft, CreditCard, Check, Loader2 } from "lucide-react";
 import { useTranslation } from "../i18n/useTranslation";
 import "../UIX/Pagamento.css";
+
+const SERVER_URL = "https://server-noloe.fly.dev";
 
 const PayPalIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 780 501">
@@ -24,6 +25,7 @@ export default function Pagamento() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedMethod, setSelectedMethod] = useState(null);
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const { prezzo_giornaliero, prenotazione_id, userId, veicolo_id } = location.state || {};
 
@@ -35,10 +37,41 @@ export default function Pagamento() {
   ];
 
   async function handleContinue() {
-    if (!selectedMethod) return;
-    const response = await supabase.from("pagamenti").insert({ pagamento_metodo: selectedMethod, veicolo_id, prenotazione_id, cliente_id: userId, pagamento_status: "in attesa" });
-    if (response.error) { alert(t("payment.error")); return; }
-    navigate("/checkout", { state: { prezzo_giornaliero, prenotazione_id, userId, veicolo_id, selectedMethod } });
+    if (!selectedMethod || loading) return;
+    setLoading(true);
+
+    try {
+      // Save flow state for the redirect-back page
+      localStorage.setItem("payment_flow", JSON.stringify({
+        step: "tokenization",
+        selectedMethod,
+        prezzo_giornaliero,
+        prenotazione_id,
+        userId,
+        veicolo_id,
+      }));
+
+      // Step 1: Init tokenization
+      const res = await fetch(`${SERVER_URL}/init-payment-tokenization`);
+      const data = await res.json();
+
+      if (data.url) {
+        // Save paymentId/txId for verify
+        localStorage.setItem("payment_ids", JSON.stringify({
+          paymentId: data.paymentId,
+          txId: data.txId,
+        }));
+        // Redirect to payment gateway
+        window.location.href = data.url;
+      } else {
+        alert(t("paymentFlow.initError"));
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("Init tokenization error:", err);
+      alert(t("paymentFlow.initError"));
+      setLoading(false);
+    }
   }
 
   return (
@@ -59,8 +92,8 @@ export default function Pagamento() {
             </div>
           ))}
         </div>
-        <button className={`continue-button ${selectedMethod ? "active" : "disabled"}`} onClick={handleContinue} disabled={!selectedMethod}>
-          {t("payment.continue")}
+        <button className={`continue-button ${selectedMethod && !loading ? "active" : "disabled"}`} onClick={handleContinue} disabled={!selectedMethod || loading}>
+          {loading ? t("paymentFlow.processing") : t("payment.continue")}
         </button>
       </div>
     </div>
