@@ -1,6 +1,7 @@
 /* ===================== REGISTER PAGE ===================== */
 .register-page {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   font-family: 'Poppins', sans-serif;
 }
