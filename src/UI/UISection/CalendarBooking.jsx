@@ -161,7 +161,13 @@ export default function CalendarBooking() {
               <div className="veh-label">
                 <div className="veh-targa">{v.targa || "-"}</div>
                 <div className="veh-model">
-                  {v.marca ? `${v.marca} ${v.modello}` : v.modello}
+                  {v.marca ? `${v.marca} ${v.modello}` : v.modello }
+                  
+                  {v.livello_carburante !== undefined && (
+                    <span className="fuel-level">
+                      {` - ${v.livello_carburante}%`}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

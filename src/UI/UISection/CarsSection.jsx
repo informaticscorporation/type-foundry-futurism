@@ -139,7 +139,9 @@ export default function CarsSection() {
       </div>
 
       {/* ===== SIDEBAR ===== */}
+
       <div className={`car-sidebar ${sidebarOpen ? "open" : ""}`}>
+       
         <div className="car-sidebar-header">
           <h2>{newVehicle.id ? "Modifica Auto" : "Aggiungi Auto"}</h2>
           <button className="sidebar-close" onClick={() => setSidebarOpen(false)}>×</button>
@@ -173,7 +175,7 @@ export default function CarsSection() {
         </div>
       </div>
 
-      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+      
     </div>
   );
 }
