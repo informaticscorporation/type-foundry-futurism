@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "../supabaseClient";
 import { useTranslation } from "../i18n/useTranslation";
 import "../UIX/Login.css";
@@ -27,13 +28,13 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleLogin = async () => {
-    if (!email || !password) { setErrorMsg(t("login.enterCredentials")); return; }
+    if (!email || !password) { toast.warning(t("login.enterCredentials")); return; }
     setLoading(true);
     setErrorMsg("");
     try {
       const { data: userData, error } = await supabase
         .from("Users").select("*").eq("email", email.toLowerCase()).eq("password_hash", password).single();
-      if (error || !userData) { setErrorMsg(t("login.invalidCredentials")); return; }
+      if (error || !userData) { toast.error(t("login.invalidCredentials")); return; }
       if (userData.TipoUtente === "Admin") {
         sessionStorage.setItem("userId", userData.id);
         sessionStorage.setItem("admin", true);

@@ -1,6 +1,7 @@
 //import component
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { Toaster } from "sonner";
 //css
 import "./App.css";
 //component
@@ -21,6 +22,7 @@ import Checkout from "./Page/Checkout";
 function App() {
   return (
     <HelmetProvider>
+      <Toaster position="top-right" richColors closeButton />
       <Router>
         <Routes>
 

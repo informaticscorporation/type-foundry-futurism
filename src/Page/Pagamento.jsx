@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, CreditCard, Check, Loader2 } from "lucide-react";
 import { useTranslation } from "../i18n/useTranslation";
+import { toast } from "sonner";
 import "../UIX/Pagamento.css";
 
 const SERVER_URL = "https://server-noloe.fly.dev";
@@ -64,12 +65,12 @@ export default function Pagamento() {
         // Redirect to payment gateway
         window.location.href = data.url;
       } else {
-        alert(t("paymentFlow.initError"));
+        toast.error(t("paymentFlow.initError"));
         setLoading(false);
       }
     } catch (err) {
       console.error("Init tokenization error:", err);
-      alert(t("paymentFlow.initError"));
+      toast.error(t("paymentFlow.initError"));
       setLoading(false);
     }
   }
