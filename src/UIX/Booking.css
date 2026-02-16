@@ -814,3 +814,70 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================
+   CONTRACT PREVIEW
+========================= */
+.contract-preview-section {
+  background: hsl(var(--booking-card));
+}
+
+.contract-preview-box {
+  background: hsl(var(--booking-bg));
+  border: 1px solid hsl(var(--booking-border));
+  border-radius: var(--booking-radius-md);
+  padding: 24px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.contract-preview-box h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: hsl(var(--booking-text));
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.contract-preview-box h5 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--booking-primary));
+  margin: 12px 0 8px;
+}
+
+.contract-preview-box hr {
+  border: none;
+  border-top: 1px solid hsl(var(--booking-border));
+  margin: 12px 0;
+}
+
+.contract-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+  color: hsl(var(--booking-text));
+}
+
+.contract-detail-row strong {
+  color: hsl(var(--booking-text-muted));
+  font-weight: 600;
+}
+
+.contract-detail-row.contract-total {
+  font-size: 16px;
+  font-weight: 700;
+  color: hsl(var(--booking-primary));
+  padding: 8px 0;
+}
+
+.contract-terms-text {
+  margin-top: 16px;
+  font-size: 12px;
+  color: hsl(var(--booking-text-light));
+  line-height: 1.6;
+}
