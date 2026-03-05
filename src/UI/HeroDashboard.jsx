@@ -11,6 +11,12 @@ import ClientiSection from "./UISection/ClientiSection";
 import PagamentiSection from "./UISection/PagamentiSection";
 import ContrattiSection from "./UISection/ContrattiSection";
 import ReportSection from "./UISection/ReportSection";
+import MulteSection from "./UISection/MulteSection";
+import SinistriSection from "./UISection/SinistriSection";
+import CheckoutSection from "./UISection/CheckoutSection";
+import ManutenzioneSection from "./UISection/ManutenzioneSection";
+import DocumentiSection from "./UISection/DocumentiSection";
+import SecondoGuidatoreSection from "./UISection/SecondoGuidatoreSection";
 
 export default function HeroDashboard({ menuOpen, setMobileMenuOpen }) {
   const { t } = useTranslation();
@@ -40,6 +46,12 @@ export default function HeroDashboard({ menuOpen, setMobileMenuOpen }) {
       case "clients": return <div className="section">{openMenuButton}<ClientiSection /></div>;
       case "payments": return <div className="section">{openMenuButton}<PagamentiSection /></div>;
       case "reports": return <div className="section">{openMenuButton}<ReportSection /></div>;
+      case "fines": return <div className="section">{openMenuButton}<MulteSection /></div>;
+      case "accidents": return <div className="section">{openMenuButton}<SinistriSection /></div>;
+      case "checkout": return <div className="section">{openMenuButton}<CheckoutSection /></div>;
+      case "maintenance": return <div className="section">{openMenuButton}<ManutenzioneSection /></div>;
+      case "documents": return <div className="section">{openMenuButton}<DocumentiSection /></div>;
+      case "secondDriver": return <div className="section">{openMenuButton}<SecondoGuidatoreSection /></div>;
       case "settings": return <div className="section">{openMenuButton}<h1>{t("heroDashboard.settings")}</h1></div>;
       default: return <div className="section">{openMenuButton}<h1>{t("sidebar.dashboard")}</h1></div>;
     }
