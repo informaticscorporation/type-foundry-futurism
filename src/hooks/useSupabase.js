@@ -52,6 +52,30 @@ export function usePagamenti() {
   return useSupabaseTable("pagamenti", { orderBy: "data_creazione", ascending: false });
 }
 
+export function useMulte() {
+  return useSupabaseTable("multe", { orderBy: "created_at", ascending: false });
+}
+
+export function useSinistri() {
+  return useSupabaseTable("sinistri", { orderBy: "created_at", ascending: false });
+}
+
+export function useCheckoutVeicolo() {
+  return useSupabaseTable("checkout_veicolo", { orderBy: "created_at", ascending: false });
+}
+
+export function useSecondoGuidatore() {
+  return useSupabaseTable("secondo_guidatore", { orderBy: "created_at", ascending: false });
+}
+
+export function useManutenzioneProgrammata() {
+  return useSupabaseTable("manutenzione_programmata", { orderBy: "data_programmata", ascending: true });
+}
+
+export function useDocumenti() {
+  return useSupabaseTable("documenti", { orderBy: "created_at", ascending: false });
+}
+
 // ====== MUTATION HELPERS ======
 
 export function useSupabaseInsert(table) {
