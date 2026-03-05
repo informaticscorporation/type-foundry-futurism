@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   LayoutDashboard, Car, CalendarDays, Users, Wallet, BarChart3, Settings, ClipboardList,
+  AlertTriangle, ShieldAlert, ClipboardCheck, Wrench, FileText, UserPlus,
 } from "lucide-react";
 import { useTranslation } from "../i18n/useTranslation";
 import "../UIX/Sidebar.css";
@@ -18,7 +19,13 @@ export default function Sidebar({ menuOpen, setMenuOpen, mobileMenuOpen, setMobi
     { id: "calendarRentals", label: t("sidebar.calendarRentals"), icon: <CalendarDays size={20} /> },
     { id: "calendarInternal", label: t("sidebar.calendarInternal"), icon: <CalendarDays size={20} /> },
     { id: "clients", label: t("sidebar.clients"), icon: <Users size={20} /> },
+    { id: "secondDriver", label: "Secondo Guidatore", icon: <UserPlus size={20} /> },
     { id: "payments", label: t("sidebar.payments"), icon: <Wallet size={20} /> },
+    { id: "checkout", label: "Checkout", icon: <ClipboardCheck size={20} /> },
+    { id: "fines", label: "Multe", icon: <AlertTriangle size={20} /> },
+    { id: "accidents", label: "Sinistri", icon: <ShieldAlert size={20} /> },
+    { id: "maintenance", label: "Manutenzione", icon: <Wrench size={20} /> },
+    { id: "documents", label: "Documenti", icon: <FileText size={20} /> },
     { id: "settings", label: t("sidebar.settings"), icon: <Settings size={20} /> },
   ];
 
